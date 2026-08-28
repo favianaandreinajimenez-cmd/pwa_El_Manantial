@@ -1,0 +1,7 @@
+{
+  "run": {
+    "type": "url",
+    "task": "npm/install",
+    "url": "https://Elmanantial_pwa"
+  }
+}
