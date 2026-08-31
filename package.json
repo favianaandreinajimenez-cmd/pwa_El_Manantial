@@ -1,7 +1,7 @@
 {
-  "name": "Aplicacion_web_progresiva",
+  "name": "el-manantial-aplicacion-web-progresiva",
   "version": "1.0.0",
-  "description": "El Manantial Production System",
+  "description": "el Manantial Production System",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
