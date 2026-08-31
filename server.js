@@ -15,7 +15,7 @@ const defaultDb = {
     { id: 1, name: "Admin User", role: "Administrador", status: "Activo", email: "admin@elmanantial.com", password: "admin123", avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCcSnQrQ5pnPKfo4ASmtyif9pnTArxqW6D57jMNAI1OZrT3aHyj4TR-0f8KA0_ZS766n_9nl0kQfZUNyQB8JTEUS1ZLo0SXHF29-p7ttfJRn2pwyAE3RBN0n4UodadbGH_bGS1fDMc_7NJyPkeOybCHd8OIjUX_uCmRHBWlcgvpTqv8durYfuWtoyJtiVkcF1EPwONiG_F34liZA5ptQ83TaZmgI6lgcPlwizpLfbp1yamU6mK7a3LXsi8H5rP4_EHBs3dza0xFBWE" },
     { id: 2, name: "Dra. Maria Mendoza", role: "Veterinario", status: "Activo", email: "veterinario@elmanantial.com", password: "vet123", avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuBhCyxLO2Hb3F75HAUXLZIJGTVsyM1Ul7FTiwJRExwn5Pz1_ApGAgfv2ceaglS0MC7WhJSf53ug7F_eRdgVjdq89nIZuOIEPvhxF4HD1kPKvrXCkVISs6e64xjBybc6BWadyXRhSQE6hm2sT33F0ZonszGQ6UxaZKKZgTNCkUFfRhriOR36eQD_ZlvoKObiWijAuy1NTe-Piv4keH0WAqqr2CHfT6vSX09KE5EHCYqTVGL6GX8tRBu9M_E5XdMsGkvU-GyH5IY5Eww" },
     { id: 3, name: "Jose Sanchez", role: "Operario", status: "Activo", email: "jose@elmanantial.com", password: "ope123", avatar: "JS" },
-    { id: 4, name: "Ana Valero", role: "Operario", status: "Activo", email: "ana@elmanantial.com", password: "ope123", avatar: "AV" }
+    { id: 4, name: "Ana Valero", role: "Operario", status: "Activo", email: "ana@obispodairy.com", password: "ope123", avatar: "AV" }
   ],
   inventory: [
     { id: 1, name: "Concentrado Lechero 22%", category: "feed", stock: 2450, unit: "kg", status: "OK" },
@@ -27,14 +27,14 @@ const defaultDb = {
   units: [
     { id: 1, name: "Lote A", owner: "Carlos Rodriguez", animalCount: 124, productionToday: 850, healthAvg: "Excelente", status: "Activa", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCiQj84qzExSTNZP9H_WPszqMEUQEn2D4g232SiZw_f6jJderu2YiED_j_YD7qRdXa86uHRTt00MvjdYqMYjAV2WkswqR_3t8YYZK6ohaO6J6SY8zZGpeq191anjsbExl-eS1G-IvTEgc6kz4ERvR0kw-dmC89849DSrlgfzlQOc86AoAp1xq653i5OhyS0c42UAWuF_TvZ-ufOM8mztT9b0MBx_w8_sAYlttHl00dREu_Atvpvc2tn848fgWzRXXC42vNODqFs0zc" },
     { id: 2, name: "Lote B", owner: "Maria Hernandez", animalCount: 86, productionToday: 520, healthAvg: "Observación", status: "Revisión", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBo0x6Srpgv2-bB9Lxgeaiew9ry2dzO5DEtRIMNJM-xeLTFt4iwgpCIU2V2fNUqozfpTUn0xluL0X7ADBFzNNIFRZw5fL_QdsDtqwlqIrXnyGJO_i0L0HptoKZaXgjweJ10Rp-vmqTsO7xHAgtJEGtq7xiee5ukZ5bgAb46kWpb7KEwtT6iLilqFlTfWy7e13kfTqTiNqCykC2DoKJSnGrlnXsHZ-AURS9PhWmBCo8QVqL3zhzKym4O5PrNTpCwuiE9CoiF1fFpNuo" },
-    { id: 3, name: "Lote C", owner: "", animalCount: 210, productionToday: 1450, healthAvg: "Excelente", status: "Activa", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDyoJBk67pMfvNC_TOuqCE0fKENi_YnS8PyuoIZbZzn9-WRIgfhrrIGBV9Qqmz52RbldmJwmWDHMH32NgPw8DM5nDsUbQAiLgwXONDLi3aAUqF6Sj3lGOKVIL1TqA_Bi-0yOrOwHxD78a_R_3NArwCKg6aTBB-6CUys2uX0dQhywQ_3MjavSCf0GkMY2wCn8-O8RoVKaO0EtTLQ4rcfQPHOF4yzJwv4ZxBsb5kseksppsWZVrBmQMapSrXkNaSu5CCMIu6CVE40zT8" }
+    { id: 3, name: "Lote A", owner: "", animalCount: 210, productionToday: 1450, healthAvg: "Excelente", status: "Activa", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDyoJBk67pMfvNC_TOuqCE0fKENi_YnS8PyuoIZbZzn9-WRIgfhrrIGBV9Qqmz52RbldmJwmWDHMH32NgPw8DM5nDsUbQAiLgwXONDLi3aAUqF6Sj3lGOKVIL1TqA_Bi-0yOrOwHxD78a_R_3NArwCKg6aTBB-6CUys2uX0dQhywQ_3MjavSCf0GkMY2wCn8-O8RoVKaO0EtTLQ4rcfQPHOF4yzJwv4ZxBsb5kseksppsWZVrBmQMapSrXkNaSu5CCMIu6CVE40zT8" }
   ],
   milkingRecords: [
-    { id: 1, unitName: "Lote B", liters: 45.5, shift: "Mañana", time: "06:45 AM", status: "VERIFICADO", date: "2026-05-23" },
-    { id: 2, unitName: "Lote A", liters: 32.8, shift: "Mañana", time: "07:12 AM", status: "VERIFICADO", date: "2026-05-23" },
-    { id: 3, unitName: "Lote B", liters: 28.0, shift: "Mañana", time: "07:45 AM", status: "VERIFICADO", date: "2026-05-23" },
-    { id: 4, unitName: "Lote A", liters: 12.2, shift: "Mañana", time: "05:30 AM", status: "PENDIENTE", date: "2026-05-23" },
-    { id: 5, unitName: "Lote B", liters: 56.1, shift: "Mañana", time: "05:15 AM", status: "VERIFICADO", date: "2026-05-23" }
+    { id: 1, unitName: "Lote A", liters: 45.5, shift: "Mañana", time: "06:45 AM", status: "VERIFICADO", date: "2026-05-23" },
+    { id: 2, unitName: "Lote B", liters: 32.8, shift: "Mañana", time: "07:12 AM", status: "VERIFICADO", date: "2026-05-23" },
+    { id: 3, unitName: "Lote A", liters: 28.0, shift: "Mañana", time: "07:45 AM", status: "VERIFICADO", date: "2026-05-23" },
+    { id: 4, unitName: "Lote B", liters: 12.2, shift: "Mañana", time: "05:30 AM", status: "PENDIENTE", date: "2026-05-23" },
+    { id: 5, unitName: "Lote A", liters: 56.1, shift: "Mañana", time: "05:15 AM", status: "VERIFICADO", date: "2026-05-23" }
   ],
   animals: [
     {
@@ -118,11 +118,7 @@ function readDb() {
 }
 
 function writeDb(data) {
-  try {
-    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
-  } catch (error) {
-    console.error("Error writing to db.json", error);
-  }
+  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
 }
 
 // APIs
@@ -130,7 +126,8 @@ function writeDb(data) {
 // 1. Dashboard data
 app.get('/api/dashboard', (req, res) => {
   const db = readDb();
-  const todayLiters = db.milkingRecords.reduce((sum, rec) => sum + (rec.liters || 0), 0);
+
+  const todayLiters = db.milkingRecords.reduce((sum, rec) => sum + rec.liters, 0);
   const activeUnitsCount = db.units.filter(u => u.status === 'Activa').length;
   const criticalItemsCount = db.inventory.filter(i => i.status === 'CRÍTICO').length;
 
@@ -157,7 +154,7 @@ app.post('/api/users', (req, res) => {
     name: req.body.name,
     role: req.body.role,
     status: req.body.status || "Activo",
-    email: req.body.email || (req.body.name.split(' ')[0].toLowerCase() + "@elmanantial.com"),
+    email: req.body.email || (req.body.name.split(' ')[0].toLowerCase() + "@obispodairy.com"),
     password: req.body.password || "12345",
     avatar: req.body.avatar || req.body.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
   };
@@ -166,19 +163,9 @@ app.post('/api/users', (req, res) => {
   res.status(201).json(newUser);
 });
 
-app.get('/api/users/:id', (req, res) => {
-  const db = readDb();
-  const user = db.users.find(u => u.id === parseInt(req.params.id, 10));
-  if (user) {
-    res.json(user);
-  } else {
-    res.status(404).json({ error: "User not found" });
-  }
-});
-
 app.put('/api/users/:id/status', (req, res) => {
   const db = readDb();
-  const user = db.users.find(u => u.id === parseInt(req.params.id, 10));
+  const user = db.users.find(u => u.id === parseInt(req.params.id));
   if (user) {
     user.status = req.body.status;
     writeDb(db);
@@ -188,9 +175,19 @@ app.put('/api/users/:id/status', (req, res) => {
   }
 });
 
+app.get('/api/users/:id', (req, res) => {
+  const db = readDb();
+  const user = db.users.find(u => u.id === parseInt(req.params.id));
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404).json({ error: "User not found" });
+  }
+});
+
 app.put('/api/users/:id', (req, res) => {
   const db = readDb();
-  const user = db.users.find(u => u.id === parseInt(req.params.id, 10));
+  const user = db.users.find(u => u.id === parseInt(req.params.id));
   if (user) {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
@@ -206,7 +203,7 @@ app.put('/api/users/:id', (req, res) => {
 
 app.delete('/api/users/:id', (req, res) => {
   const db = readDb();
-  const userId = parseInt(req.params.id, 10);
+  const userId = parseInt(req.params.id);
   const index = db.users.findIndex(u => u.id === userId);
   if (index !== -1) {
     db.users.splice(index, 1);
@@ -225,10 +222,9 @@ app.post('/api/login', (req, res) => {
     email = 'jose@elmanantial.com';
     password = 'ope123';
   } else if (email === 'operador2@elmanantial.com' && password === 'operador2') {
-    email = 'ana@elmanantial.com';
+    email = 'ana@obispodairy.com';
     password = 'ope123';
-  } else if (email === 'veterinario@elmanantial.com.com' && password === 'veterinario1') {
-    email = 'veterinario@elmanantial.com';
+  } else if (email === 'veterinario@obispodairy.com' && password === 'veterinario1') {
     password = 'vet123';
   }
 
@@ -242,7 +238,6 @@ app.post('/api/login', (req, res) => {
   res.json(user);
 });
 
-// 3. Inventory API
 app.get('/api/inventory', (req, res) => {
   const db = readDb();
   res.json(db.inventory);
@@ -265,7 +260,7 @@ app.post('/api/inventory', (req, res) => {
 
 app.put('/api/inventory/:id/stock', (req, res) => {
   const db = readDb();
-  const item = db.inventory.find(i => i.id === parseInt(req.params.id, 10));
+  const item = db.inventory.find(i => i.id === parseInt(req.params.id));
   if (item) {
     item.stock = parseFloat(req.body.stock);
     if (item.stock === 0) item.status = "CRÍTICO";
@@ -291,7 +286,7 @@ app.post('/api/units', (req, res) => {
     id: db.units.length > 0 ? Math.max(...db.units.map(u => u.id)) + 1 : 1,
     name: req.body.name,
     owner: req.body.owner,
-    animalCount: parseInt(req.body.animalCount, 10) || 0,
+    animalCount: parseInt(req.body.animalCount) || 0,
     productionToday: parseFloat(req.body.productionToday) || 0,
     healthAvg: req.body.healthAvg || "Excelente",
     status: req.body.status || "Activa",
@@ -310,6 +305,7 @@ app.get('/api/milking', (req, res) => {
 
 app.post('/api/milking', (req, res) => {
   const db = readDb();
+
   const now = new Date();
   let hours = now.getHours();
   const minutes = String(now.getMinutes()).padStart(2, '0');
@@ -381,7 +377,7 @@ app.post('/api/animals/:id/events', (req, res) => {
   if (req.body.status) {
     animal.status = req.body.status;
   }
-  if (req.body.type && req.body.type.toLowerCase().includes("vacun")) {
+  if (req.body.type.toLowerCase().includes("vacun")) {
     animal.lastVaccination = dateStr;
   }
 
@@ -423,7 +419,7 @@ app.get('/api/health-summary', (req, res) => {
 // 7. Reports API
 app.get('/api/reports', (req, res) => {
   const db = readDb();
-  const totalLiters = db.milkingRecords.reduce((sum, rec) => sum + (rec.liters || 0), 0);
+  const totalLiters = db.milkingRecords.reduce((sum, rec) => sum + rec.liters, 0);
   const avgLitres = db.animals.length > 0 ? (totalLiters / 30 / db.animals.length).toFixed(1) : 0;
 
   const chartData = [
@@ -465,12 +461,12 @@ app.get('/api/reports', (req, res) => {
   });
 });
 
-// Fallback: serve index.html for all page requests (single routing)
+// Fallback: serve index.html for all page requests
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api/')) return next();
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(PORT, () => {
-  console.log(`El Manantial running at http://localhost:${PORT}`);
+  console.log(`el-manantial-aplicacion-web-progresiva corriendo en http://localhost:${PORT}`);
 });
