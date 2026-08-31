@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-
 <html class="light" lang="es"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  <script src="local-db-fallback.js"></script>
+<script src="local-db-fallback.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
       tailwind.config = {
@@ -112,13 +110,30 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
         .custom-chart-bar { transition: height 1s ease-out; }
+
+        /* Estilos optimizados para impresión / exportación a PDF sin errores */
+        @media print {
+            aside, header, nav, button, .fixed {
+                display: none !important;
+            }
+            main {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+            body {
+                background-color: white !important;
+                color: black !important;
+            }
+            .glass-card, div {
+                box-shadow: none !important;
+            }
+        }
     </style>
 <style>
     body {
       min-height: max(884px, 100dvh);
     }
-
-        /* Custom styles for dark mode */
         html.dark .glass-card {
             background: rgba(22, 32, 50, 0.8) !important;
             border-color: #25354e !important;
@@ -240,7 +255,7 @@
             color: #0b0f19 !important;
         }
         html.dark table thead tr {
-            background-color: #101726 !important;
+            background-color: #0b0f19 !important;
             color: #f8fafc !important;
         }
         html.dark table tbody tr {
@@ -290,33 +305,6 @@
         }
         html.dark .bg-primary:hover {
             background-color: #059669 !important;
-        }
-        html.dark .bg-\[\#e3f2fd\] {
-            background-color: #1e3a8a !important;
-        }
-        html.dark .text-\[\#1565c0\] {
-            color: #93c5fd !important;
-        }
-        html.dark .bg-\[\#dcfce7\] {
-            background-color: #064e3b !important;
-        }
-        html.dark .text-\[\#14532d\] {
-            color: #a7f3d0 !important;
-        }
-        html.dark .text-\[\#2e7d32\] {
-            color: #a7f3d0 !important;
-        }
-        html.dark .text-\[\#c62828\] {
-            color: #fca5a5 !important;
-        }
-        html.dark svg path[stroke="#154212"] {
-            stroke: #10b981 !important;
-        }
-        html.dark svg circle[fill="#154212"] {
-            fill: #10b981 !important;
-        }
-        html.dark stop[stop-color="#154212"] {
-            stop-color: #10b981 !important;
         }
         html.dark .shadow-sm,
         html.dark .shadow-md,
@@ -411,7 +399,7 @@
        showSidebar ? 'p-1 hover:bg-surface-container-highest gap-3 justify-start' : 'p-0 w-12 h-12 mx-auto justify-center hover:bg-surface-container-highest',
        isActive('usuarios.html') ? 'bg-primary-container text-on-primary-container font-bold' : ''
      ]">
-    <img v-if="currentUser && currentUser.avatar && ((currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('data:')) || currentUser.avatar.startsWith('data:'))" alt="User avatar" class="w-10 h-10 min-w-[40px] rounded-full bg-secondary-container object-cover" :src="currentUser.avatar"/>
+    <img v-if="currentUser && currentUser.avatar && ((currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('data:')))" alt="User avatar" class="w-10 h-10 min-w-[40px] rounded-full bg-secondary-container object-cover" :src="currentUser.avatar"/>
     <div v-else class="w-10 h-10 min-w-[40px] rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm">
       {{ currentUser ? currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'US' }}
     </div>
@@ -473,15 +461,34 @@
 </select>
 </div>
 </div>
-<div class="flex gap-sm w-full md:w-auto">
-<button class="flex-1 md:flex-none flex items-center justify-center gap-xs px-md py-2 border border-primary text-primary font-label-lg text-label-lg rounded-lg hover:bg-primary-fixed transition-colors active:scale-95 duration-150">
-<span class="material-symbols-outlined text-[20px]" data-icon="share">share</span>
-                    Compartir
-                </button>
-<button class="flex-1 md:flex-none flex items-center justify-center gap-xs px-md py-2 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg hover:opacity-90 transition-colors active:scale-95 duration-150 shadow-sm">
-<span class="material-symbols-outlined text-[20px]" data-icon="picture_as_pdf">picture_as_pdf</span>
-                    Exportar PDF
-                </button>
+
+<div class="flex gap-sm w-full md:w-auto relative">
+    <!-- Botón con menú desplegable para Compartir -->
+    <div class="relative flex-1 md:flex-none">
+        <button @click="showShareMenu = !showShareMenu" class="w-full md:w-auto flex items-center justify-center gap-xs px-md py-2 border border-primary text-primary font-label-lg text-label-lg rounded-lg hover:bg-primary-fixed transition-colors active:scale-95 duration-150 cursor-pointer">
+            <span class="material-symbols-outlined text-[20px]" data-icon="share">share</span>
+            Compartir
+            <span class="material-symbols-outlined text-[16px]">expand_more</span>
+        </button>
+
+        <!-- Menú emergente de compartir (Solo WhatsApp y Correo Electrónico) -->
+        <div v-if="showShareMenu" @click.away="showShareMenu = false" class="absolute left-0 md:left-auto md:right-0 mt-2 w-56 bg-white dark:bg-[#162032] border border-outline-variant dark:border-[#25354e] rounded-xl shadow-xl z-50 py-2 overflow-hidden">
+            <button @click="shareWhatsApp" class="w-full text-left px-4 py-2.5 flex items-center gap-3 hover:bg-surface-container-low dark:hover:bg-[#1e293b] text-on-surface dark:text-gray-200 transition-colors text-sm cursor-pointer">
+                <span class="material-symbols-outlined text-emerald-600">chat</span>
+                WhatsApp
+            </button>
+            <button @click="shareEmail" class="w-full text-left px-4 py-2.5 flex items-center gap-3 hover:bg-surface-container-low dark:hover:bg-[#1e293b] text-on-surface dark:text-gray-200 transition-colors text-sm cursor-pointer">
+                <span class="material-symbols-outlined text-blue-500">mail</span>
+                Correo Electrónico
+            </button>
+        </div>
+    </div>
+
+    <!-- Botón Exportar PDF -->
+    <button @click="exportPDF" class="flex-1 md:flex-none flex items-center justify-center gap-xs px-md py-2 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg hover:opacity-90 transition-colors active:scale-95 duration-150 shadow-sm cursor-pointer">
+        <span class="material-symbols-outlined text-[20px]" data-icon="picture_as_pdf">picture_as_pdf</span>
+        Exportar PDF
+    </button>
 </div>
 </section>
 
@@ -535,6 +542,7 @@
 </div>
 </div>
 </section>
+
 <!-- Bento Layout: Chart and Table -->
 <section class="grid grid-cols-1 lg:grid-cols-3 gap-md">
 <!-- Bar Chart (Asymmetric Span) -->
@@ -575,10 +583,11 @@
 <button @click="showRankingModal = true" class="mt-auto pt-md text-primary font-label-lg text-label-lg hover:underline text-center w-full cursor-pointer">Ver reporte detallado </button>
 </div>
 </section>
+
 <!-- Detailed Table Section -->
 <section class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
-<div class="p-md border-b border-outline-variant flex justify-between items-center bg-surface-bright">
-<h4 class="font-headline-md text-headline-md font-bold text-on-surface">Histórico de Producción</h4>
+<div class="p-md border-b border-outline-variant flex justify-between items-center bg-[#eff4ff] dark:bg-[#0f172a] text-on-surface dark:text-white">
+<h4 class="font-headline-md text-headline-md font-bold text-on-surface dark:text-white">Historial de Producción</h4>
 <div class="flex gap-xs">
 <span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary" data-icon="filter_list">filter_list</span>
 <span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary" data-icon="search">search</span>
@@ -587,8 +596,10 @@
 <div class="overflow-x-auto">
 <table class="w-full text-left border-collapse">
 <thead>
-<tr class="bg-surface-container text-on-surface-variant font-label-lg text-label-lg">
+<tr class="bg-surface-container-low dark:bg-[#101726] text-on-surface dark:text-white font-label-lg text-label-lg">
 <th class="px-md py-4 border-b border-outline-variant">Fecha</th>
+<th class="px-md py-4 border-b border-outline-variant">ID Animal</th>
+<th class="px-md py-4 border-b border-outline-variant">Nombre</th>
 <th class="px-md py-4 border-b border-outline-variant">Lote</th>
 <th class="px-md py-4 border-b border-outline-variant">Turno</th>
 <th class="px-md py-4 border-b border-outline-variant">Hora</th>
@@ -599,7 +610,9 @@
 <tbody class="divide-y divide-outline-variant font-data-tabular text-data-tabular">
 <tr v-for="record in records" :key="record.id" class="hover:bg-surface-container-low transition-colors">
 <td class="px-md py-4">{{ record.date }}</td>
-<td class="px-md py-4 font-bold">{{ record.unitName }}</td>
+<td class="px-md py-4 font-bold">{{ record.animalId || record.unitName }}</td>
+<td class="px-md py-4">{{ record.animalName || record.shift }}</td>
+<td class="px-md py-4">{{ record.lote || 'Lote A' }}</td>
 <td class="px-md py-4">{{ record.shift }}</td>
 <td class="px-md py-4">{{ record.time }}</td>
 <td class="px-md py-4 font-bold">{{ record.liters }} L</td>
@@ -608,18 +621,18 @@
 </td>
 </tr>
 <tr v-if="records.length === 0">
-<td colspan="6" class="px-md py-8 text-center text-on-surface-variant italic">No hay registros de producción.</td>
+<td colspan="8" class="px-md py-8 text-center text-on-surface-variant italic">No hay registros de producción.</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="p-md flex justify-between items-center bg-surface-bright">
-<span class="font-label-md text-label-md text-outline">Mostrando 4 de 40 registros</span>
+<div class="p-md flex justify-between items-center bg-[#eff4ff] dark:bg-[#0f172a] text-on-surface dark:text-white">
+<span class="font-label-md text-label-md text-on-surface-variant dark:text-gray-400">Mostrando 4 de 40 registros</span>
 <div class="flex gap-base">
-<button class="p-1 rounded hover:bg-outline-variant disabled:opacity-50" disabled="">
+<button class="p-1 rounded hover:bg-outline-variant/30 disabled:opacity-50" disabled="">
 <span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
 </button>
-<button class="p-1 rounded hover:bg-outline-variant">
+<button class="p-1 rounded hover:bg-outline-variant/30">
 <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
 </button>
 </div>
@@ -627,6 +640,7 @@
 </section>
 </div>
 </main>
+
 <!-- Metric Detail Modal -->
 <div v-if="showModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
   <div class="bg-white rounded-xl border border-outline-variant p-6 max-w-md w-full shadow-xl text-left">
@@ -638,7 +652,7 @@
     </div>
     <p class="font-body-md text-body-md text-on-surface-variant mb-6 leading-relaxed">{{ modalDescription }}</p>
     <div class="flex justify-end">
-      <button @click="showModal = false" class="px-6 py-2.5 bg-primary text-on-primary rounded-lg font-label-lg hover:brightness-110 active:scale-95 transition-all">Entendido</button>
+      <button @click="showModal = false" class="px-6 py-2.5 bg-primary text-on-primary rounded-lg font-label-lg hover:brightness-110 active:scale-95 transition-all cursor-pointer">Entendido</button>
     </div>
   </div>
 </div>
@@ -657,7 +671,7 @@
           <p class="text-on-surface-variant text-sm mt-0.5">Rendimiento acumulado de producción por unidad</p>
         </div>
       </div>
-      <button @click="showRankingModal = false" class="text-on-surface-variant hover:text-error p-1 rounded-full hover:bg-surface-container transition-colors">
+      <button @click="showRankingModal = false" class="text-on-surface-variant hover:text-error p-1 rounded-full hover:bg-surface-container transition-colors cursor-pointer">
         <span class="material-symbols-outlined">close</span>
       </button>
     </div>
@@ -682,50 +696,43 @@
       </div>
     </div>
     <div class="flex justify-end mt-6">
-      <button @click="showRankingModal = false" class="px-6 py-2.5 bg-primary text-on-primary font-bold rounded-xl hover:brightness-110 active:scale-95 transition-all shadow-md">Cerrar Reporte</button>
+      <button @click="showRankingModal = false" class="px-6 py-2.5 bg-primary text-on-primary font-bold rounded-xl hover:brightness-110 active:scale-95 transition-all shadow-md cursor-pointer">Cerrar Reporte</button>
     </div>
   </div>
 </div>
 
 <!-- Bottom Nav Bar (Mobile Only) -->
 <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-1 py-2 bg-surface dark:bg-inverse-surface border-t border-outline-variant dark:border-outline shadow-lg dark:shadow-none lg:hidden">
-    <!-- Inicio -->
     <a v-if="currentUser" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('index.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="index.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('index.html') ? 'fill-icon' : ''" :style="isActive('index.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="analytics">analytics</span>
       <span class="text-[10px] mt-0.5 leading-none">Inicio</span>
     </a>
-    <!-- Ordeño -->
     <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('ordeno.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="ordeno.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('ordeno.html') ? 'fill-icon' : ''" :style="isActive('ordeno.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="opacity">opacity</span>
       <span class="text-[10px] mt-0.5 leading-none">Ordeño</span>
     </a>
-    <!-- Finca -->
     <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('unidad.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="unidad.html">
-      <span class="material-symbols-outlined text-[20px]" :class="isActive('unidad.html') ? 'fill-icon' : ''" :style="isActive('ununits.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="location_on">location_on</span>
+      <span class="material-symbols-outlined text-[20px]" :class="isActive('unidad.html') ? 'fill-icon' : ''" :style="isActive('unidad.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="location_on">location_on</span>
       <span class="text-[10px] mt-0.5 leading-none">Finca</span>
     </a>
-    <!-- Stock -->
     <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('inventario.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="inventario.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('inventario.html') ? 'fill-icon' : ''" :style="isActive('inventario.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="inventory">inventory</span>
       <span class="text-[10px] mt-0.5 leading-none">Inventario</span>
     </a>
-    <!-- Salud -->
     <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('salud.html') || isActive('historial.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="salud.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('salud.html') || isActive('historial.html') ? 'fill-icon' : ''" :style="isActive('salud.html') || isActive('historial.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="health_and_safety">health_and_safety</span>
       <span class="text-[10px] mt-0.5 leading-none">Salud</span>
     </a>
-    <!-- Reportes -->
     <a v-if="currentUser && currentUser.role === 'Administrador'" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('reportes.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="reportes.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('reportes.html') ? 'fill-icon' : ''" :style="isActive('reportes.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="description">description</span>
       <span class="text-[10px] mt-0.5 leading-none">Reportes</span>
     </a>
-    <!-- Perfil -->
     <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('usuarios.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="usuarios.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('usuarios.html') ? 'fill-icon' : ''" :style="isActive('usuarios.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="group">group</span>
@@ -744,10 +751,11 @@
     createApp({
         data() {
             return {
-                    isDarkMode: false,
-                    currentUser: null,
+                isDarkMode: false,
+                currentUser: null,
                 showSidebar: false,
                 showModal: false,
+                showShareMenu: false,
                 modalTitle: '',
                 modalDescription: '',
                 modalIcon: '',
@@ -772,13 +780,11 @@
                 const userStr = localStorage.getItem('loggedInUser');
                 if (userStr) {
                     this.currentUser = JSON.parse(userStr);
-                    // Force logout if account status is Inactive
                     if (this.currentUser.status !== 'Activo') {
                         localStorage.removeItem('loggedInUser');
                         window.location.href = 'login.html';
                         return;
                     }
-                    // Verify status on server to sign out inactive sessions on reload
                     fetch(`/api/users/${this.currentUser.id}`)
                         .then(res => {
                             if (res.ok) return res.json();
@@ -795,7 +801,6 @@
                         })
                         .catch(err => console.warn("Could not verify status on server, keeping local session", err));
 
-                    // Role based guards
                     if (this.currentUser.role === 'Veterinario') {
                         window.location.href = 'salud.html';
                         return;
@@ -811,7 +816,6 @@
                 }
 
             this.fetchReports();
-            // Bind scale micro-interactions
             document.querySelectorAll('button, a').forEach(el => {
                 el.addEventListener('mousedown', () => { el.style.transform = 'scale(0.96)'; });
                 el.addEventListener('mouseup', () => { el.style.transform = 'scale(1)'; });
@@ -819,39 +823,66 @@
             });
         },
         methods: {
-                toggleTheme() {
-                    this.isDarkMode = !this.isDarkMode;
-                    if (this.isDarkMode) {
-                        document.documentElement.classList.add('dark');
-                        localStorage.setItem('theme', 'dark');
-                    } else {
-                        document.documentElement.classList.remove('dark');
-                        localStorage.setItem('theme', 'light');
-                    }
-                },
+            toggleTheme() {
+                this.isDarkMode = !this.isDarkMode;
+                if (this.isDarkMode) {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                }
+            },
 
-                logout() {
-                    localStorage.removeItem('loggedInUser');
-                    window.location.href = 'login.html';
-                },
+            logout() {
+                localStorage.removeItem('loggedInUser');
+                window.location.href = 'login.html';
+            },
 
             isActive(page) {
                 const path = window.location.pathname;
                 return path.includes(page) || (page === 'index.html' && (path.endsWith('/') || path.endsWith('/index.html') || path === ''));
             },
+
+            // Funciones para Compartir (WhatsApp y Correo)
+            shareWhatsApp() {
+                this.showShareMenu = false;
+                const text = `📊 *Reporte de Producción - El Manantial*\nTotal Litros: ${this.totalLiters.toLocaleString()} L\nPromedio por Vaca: ${this.avgLitersPerCow} L/día\nEnlace: ${window.location.href}`;
+                const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+                window.open(whatsappUrl, '_blank');
+            },
+
+            shareEmail() {
+                this.showShareMenu = false;
+                const subject = 'Reporte de Producción - Finca El Manantial';
+                const body = `Hola,\n\nAquí tienes el resumen actual de la producción lechera:\n\n- Total Litros Mensuales: ${this.totalLiters.toLocaleString()} L\n- Promedio por Vaca: ${this.avgLitersPerCow} L/día\n- Proyección Próximo Mes: ${this.projectionNextMonth.toLocaleString()} L\n\nPuedes ver el detalle completo en el sistema: ${window.location.href}`;
+                
+                try {
+                    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                    window.location.href = mailtoUrl;
+                } catch (e) {
+                    alert('No se pudo abrir el cliente de correo.');
+                }
+            },
+
+            // Función corregida para Exportar a PDF (Impresión limpia)
+            exportPDF() {
+                window.print();
+            },
+
             openMetricModal(type) {
                 if (type === 'liters') {
                     this.modalTitle = 'Total Litros Mensuales';
                     this.modalIcon = 'water_drop';
-                    this.modalDescription = 'Esta métrica representa la producción acumulada de leche durante el mes actual en toda la Unidad de Producción Pecuaria  activas del El Manantial. Se calcula sumando los registros diarios de ordeño matutino y vespertino.';
+                    this.modalDescription = 'Esta métrica representa la producción acumulada de leche durante el mes actual en toda la Unidad de Producción Pecuaria activa de El Manantial.';
                 } else if (type === 'avg') {
                     this.modalTitle = 'Promedio por Vaca';
                     this.modalIcon = 'pets';
-                    this.modalDescription = 'El rendimiento promedio por animal se calcula dividiendo la producción diaria total entre el número de vacas ordeñadas en el mismo período. Esto te permite evaluar la eficiencia productiva de tu rebaño y detectar variaciones en la salud o nutrición general.';
+                    this.modalDescription = 'El rendimiento promedio por animal se calcula dividiendo la producción diaria total entre el número de vacas ordeñadas en el mismo período.';
                 } else if (type === 'projection') {
                     this.modalTitle = 'Proyección Próximo Mes';
                     this.modalIcon = 'batch_prediction';
-                    this.modalDescription = 'Esta proyección es estimada mediante un análisis predictivo basado en el histórico de producción de los últimos 30 días, la estacionalidad climática de Barinas y el ciclo de lactancia actual de las vacas registradas.';
+                    this.modalDescription = 'Esta proyección es estimada mediante un análisis predictivo basado en el histórico de producción de los últimos 30 días.';
                 }
                 this.showModal = true;
             },
@@ -868,7 +899,6 @@
                 } catch (err) {
                     console.error("Error fetching reports data", err);
                 } finally {
-                    // Simple chart animation trigger
                     this.$nextTick(() => {
                         const bars = document.querySelectorAll('.custom-chart-bar');
                         bars.forEach(bar => {
@@ -885,7 +915,7 @@
                 if (!this.chartData || this.chartData.length === 0) return '0%';
                 const max = Math.max(...this.chartData.map(p => p.liters));
                 if (max === 0) return '0%';
-                const pct = (liters / max) * 90; // scale up to 90%
+                const pct = (liters / max) * 90;
                 return `${Math.max(10, pct)}%`;
             },
             getRankingPercentage(litersStr) {
