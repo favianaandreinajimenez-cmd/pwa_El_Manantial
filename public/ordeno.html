@@ -1,5 +1,4 @@
- <!DOCTYPE html>
- 
+<!DOCTYPE html>
 <html lang="es"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -479,11 +478,26 @@
 <option value="Lote B">Lote B</option>
 </select>
 </div>
+
+<!-- ID Animal y Nombre en Dos Cuadros Horizontales con Nombres Arriba -->
+<div>
+<div class="grid grid-cols-2 gap-base">
+<div>
+<label class="block font-label-lg text-label-lg mb-xs text-on-surface-variant">ID Animal</label>
+<input v-model="newRecord.animalId" required class="w-full bg-surface-container-lowest border border-outline rounded-lg h-12 px-base focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" placeholder="Ej: #B-201" type="text"/>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg mb-xs text-on-surface-variant">Nombre</label>
+<input v-model="newRecord.animalName" required class="w-full bg-surface-container-lowest border border-outline rounded-lg h-12 px-base focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" placeholder="Ej: gitana" type="text"/>
+</div>
+</div>
+</div>
+
 <!-- Amount of Liters -->
 <div>
 <label class="block font-label-lg text-label-lg mb-xs text-on-surface-variant" for="liters">Cantidad de Litros</label>
 <div class="relative">
-<input v-model="newRecord.liters" required class="w-full bg-surface-container-lowest border border-outline rounded-lg h-12 px-base focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" id="liters" placeholder="0.00" type="text" inputmode="decimal" maxlength="5" @input="validateLiters"/>
+<input v-model="newRecord.liters" @input="validateLiters" required class="w-full bg-surface-container-lowest border border-outline rounded-lg h-12 px-base focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" id="liters" placeholder="0.00" max="1.000" step="0.01" type="text" maxlength="5"/>
 <span class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">LT</span>
 </div>
 </div>
@@ -535,7 +549,10 @@
 <span class="material-symbols-outlined" data-icon="opacity">opacity</span>
 </div>
 <div>
-<p class="font-label-lg text-label-lg text-on-surface">{{ record.unitName }}</p>
+<p class="font-label-lg text-label-lg text-on-surface">
+    {{ record.unitName }} 
+    <span v-if="record.animalId || record.animalName" class="text-xs font-medium text-primary">({{ record.animalId }} - {{ record.animalName }})</span>
+</p>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ record.shift }} • {{ record.time }}</p>
 </div>
 </div>
@@ -616,6 +633,8 @@
                     submitting: false,
                     newRecord: {
                         unitName: '',
+                        animalId: '',
+                        animalName: '',
                         liters: '',
                         shift: 'morning'
                     }
@@ -690,6 +709,13 @@
                     const path = window.location.pathname;
                     return path.includes(page) || (page === 'index.html' && (path.endsWith('/') || path.endsWith('/index.html') || path === ''));
                 },
+                validateLiters() {
+                    if (this.newRecord.liters > 1000) {
+                        this.newRecord.liters = 1000;
+                    } else if (this.newRecord.liters < 0) {
+                        this.newRecord.liters = 0;
+                    }
+                },
                 async fetchData() {
                     try {
                         const [milkingRes, unitsRes] = await Promise.all([
@@ -705,20 +731,27 @@
                 async submitRecord() {
                     this.submitting = true;
                     try {
+                        const payload = {
+                            ...this.newRecord
+                        };
                         const res = await fetch('/api/milking', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(this.newRecord)
+                            body: JSON.stringify(payload)
                         });
                         if (res.ok) {
                             const created = await res.json();
                             this.records.unshift(created);
                             this.newRecord = {
                                 unitName: '',
+                                animalId: '',
+                                animalName: '',
                                 liters: '',
                                 shift: 'morning'
                             };
                             alert("Registro guardado con éxito.");
+                        } else {
+                            alert("Hubo un error al guardar el registro.");
                         }
                     } catch (err) {
                         console.error("Error saving milking record", err);
@@ -729,5 +762,4 @@
             }
         }).mount('#app');
     </script>
-</body></html> 
-
+</body></html>
