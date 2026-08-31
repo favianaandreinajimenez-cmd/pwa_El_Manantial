@@ -305,12 +305,12 @@
                             </div>
                         </div>
                         <div class="mt-md h-24 w-full relative">
-                            <svg class="w-full h-full overflow-visible" viewbox="0 0 400 100">
+                            <svg class="w-full h-full overflow-visible" viewBox="0 0 400 100">
                                 <defs>
-                                    <lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+                                    <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
                                         <stop offset="0%" stop-color="#154212" stop-opacity="0.2"></stop>
                                         <stop offset="100%" stop-color="#154212" stop-opacity="0"></stop>
-                                    </lineargradient>
+                                    </linearGradient>
                                 </defs>
                                 <path d="M0,80 Q50,60 100,70 T200,40 T300,50 T400,20" fill="none" stroke="#154212" stroke-width="3"></path>
                                 <path d="M0,80 Q50,60 100,70 T200,40 T300,50 T400,20 L400,100 L0,100 Z" fill="url(#chartGradient)"></path>
@@ -364,17 +364,21 @@
                                 <thead>
                                     <tr class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md">
                                         <th class="px-md py-3 font-semibold">Unidad</th>
-                                        <th class="px-md py-3 font-semibold">ID Animal / Nombre</th>
-                                        <th class="px-md py-3 font-semibold">Ubicación / Hora</th>
-                                        <th class="px-md py-3 font-semibold text-right">Rendimiento (L)</th>
+                                        <th class="px-md py-3 font-semibold">ID Animal</th>
+                                        <th class="px-md py-3 font-semibold">Nombre</th>
+                                        <th class="px-md py-3 font-semibold">Ubicación</th>
+                                        <th class="px-md py-3 font-semibold">Hora</th>
+                                        <th class="px-md py-3 font-semibold text-right">Rendimiento (Lt)</th>
                                         <th class="px-md py-3 font-semibold">Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-outline-variant">
                                     <tr v-for="record in milkingRecords" :key="record.id" class="hover:bg-surface-container-low transition-colors group">
                                         <td class="px-md py-4 font-data-tabular text-data-tabular font-bold">{{ record.unitName }}</td>
-                                        <td class="px-md py-4 text-on-surface font-body-sm text-body-sm">{{ record.animalName }}</td>
-                                        <td class="px-md py-4 text-on-surface-variant font-body-sm text-body-sm">{{ record.location }} • {{ record.time }}</td>
+                                        <td class="px-md py-4 text-on-surface font-body-sm text-body-sm font-bold">{{ record.animalName.split('/')[0].replace('ID:', '').trim() || record.animalName }}</td>
+                                        <td class="px-md py-4 text-on-surface font-body-sm text-body-sm">{{ record.animalName.split('/')[1] ? record.animalName.split('/')[1].trim() : '-' }}</td>
+                                        <td class="px-md py-4 text-on-surface-variant font-body-sm text-body-sm">{{ record.location }}</td>
+                                        <td class="px-md py-4 text-on-surface-variant font-body-sm text-body-sm">{{ record.time }}</td>
                                         <td class="px-md py-4 text-right font-data-tabular text-data-tabular font-bold">{{ record.liters }}</td>
                                         <td class="px-md py-4">
                                             <span :class="record.status === 'VERIFICADO' || record.status === 'Óptimo' ? 'bg-[#dcfce7] text-[#14532d]' : 'bg-error-container text-on-error-container'" class="px-3 py-1 rounded-full font-label-md text-label-md">
@@ -383,7 +387,7 @@
                                         </td>
                                     </tr>
                                     <tr v-if="milkingRecords.length === 0">
-                                        <td colspan="5" class="px-md py-8 text-center text-on-surface-variant italic">No hay registros de ordeño hoy.</td>
+                                        <td colspan="7" class="px-md py-8 text-center text-on-surface-variant italic">No hay registros de ordeño hoy.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -544,12 +548,12 @@
                             </div>
                         </div>
                         <div class="mt-md h-24 w-full relative">
-                            <svg class="w-full h-full overflow-visible" viewbox="0 0 400 100">
+                            <svg class="w-full h-full overflow-visible" viewBox="0 0 400 100">
                                 <defs>
-                                    <lineargradient id="chartGradient2" x1="0" x2="0" y1="0" y2="1">
+                                    <linearGradient id="chartGradient2" x1="0" x2="0" y1="0" y2="1">
                                         <stop offset="0%" stop-color="#154212" stop-opacity="0.2"></stop>
                                         <stop offset="100%" stop-color="#154212" stop-opacity="0"></stop>
-                                    </lineargradient>
+                                    </linearGradient>
                                 </defs>
                                 <path d="M0,80 Q50,60 100,70 T200,40 T300,50 T400,20" fill="none" stroke="#154212" stroke-width="3"></path>
                                 <path d="M0,80 Q50,60 100,70 T200,40 T300,50 T400,20 L400,100 L0,100 Z" fill="url(#chartGradient2)"></path>
@@ -588,7 +592,7 @@
                     </a>
 
                     <!-- TABLA: ÚLTIMOS REGISTROS DE ORDEÑO (OPERARIO) -->
-                    <div class="md:col-span-3 bg-white border border-outline-variant rounded-xl overflow-hidden shadow-sm flex flex-col">
+                    <div class="md:col-span-4 bg-white border border-outline-variant rounded-xl overflow-hidden shadow-sm flex flex-col">
                         <div class="p-md bg-surface-container-low border-b border-outline-variant flex justify-between items-center">
                             <h3 class="font-headline-md text-headline-md text-primary font-bold">Últimos Registros de Ordeño</h3>
                             <a href="ordeno.html" class="flex items-center gap-xs text-primary font-label-lg text-label-lg hover:underline">
@@ -601,17 +605,21 @@
                                 <thead>
                                     <tr class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md border-b border-outline-variant">
                                         <th class="px-md py-3 font-semibold">Unidad</th>
-                                        <th class="px-md py-3 font-semibold">ID Animal / Nombre</th>
-                                        <th class="px-md py-3 font-semibold">Ubicación / Hora</th>
-                                        <th class="px-md py-3 font-semibold text-right">Rendimiento (L)</th>
+                                        <th class="px-md py-3 font-semibold">ID Animal</th>
+                                        <th class="px-md py-3 font-semibold">Nombre</th>
+                                        <th class="px-md py-3 font-semibold">Ubicación</th>
+                                        <th class="px-md py-3 font-semibold">Hora</th>
+                                        <th class="px-md py-3 font-semibold text-right">Rendimiento (Lt)</th>
                                         <th class="px-md py-3 font-semibold">Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-outline-variant">
                                     <tr v-for="record in milkingRecords" :key="record.id" class="hover:bg-surface-container-low transition-colors group">
                                         <td class="px-md py-4 font-data-tabular text-data-tabular font-bold">{{ record.unitName }}</td>
-                                        <td class="px-md py-4 text-on-surface font-body-sm text-body-sm">{{ record.animalName }}</td>
-                                        <td class="px-md py-4 text-on-surface-variant font-body-sm text-body-sm">{{ record.location }} • {{ record.time }}</td>
+                                        <td class="px-md py-4 text-on-surface font-body-sm text-body-sm font-bold">{{ record.animalName.split('/')[0].replace('ID:', '').trim() || record.animalName }}</td>
+                                        <td class="px-md py-4 text-on-surface font-body-sm text-body-sm">{{ record.animalName.split('/')[1] ? record.animalName.split('/')[1].trim() : '-' }}</td>
+                                        <td class="px-md py-4 text-on-surface-variant font-body-sm text-body-sm">{{ record.location }}</td>
+                                        <td class="px-md py-4 text-on-surface-variant font-body-sm text-body-sm">{{ record.time }}</td>
                                         <td class="px-md py-4 text-right font-data-tabular text-data-tabular font-bold">{{ record.liters }}</td>
                                         <td class="px-md py-4">
                                             <span :class="record.status === 'VERIFICADO' || record.status === 'Óptimo' ? 'bg-[#dcfce7] text-[#14532d]' : 'bg-error-container text-on-error-container'" class="px-3 py-1 rounded-full font-label-md text-label-md">
@@ -620,61 +628,10 @@
                                         </td>
                                     </tr>
                                     <tr v-if="milkingRecords.length === 0">
-                                        <td colspan="5" class="px-md py-8 text-center text-on-surface-variant italic">No hay registros de ordeño registrados hoy.</td>
+                                        <td colspan="7" class="px-md py-8 text-center text-on-surface-variant italic">No hay registros de ordeño registrados hoy.</td>
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-
-                    <div class="lg:col-span-1 bg-surface-container-high border border-outline-variant p-md rounded-xl shadow-sm flex flex-col items-center text-center justify-between">
-                        <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-sm mb-md text-primary">
-                            <span class="material-symbols-outlined text-3xl" data-icon="agriculture">agriculture</span>
-                        </div>
-                        <h4 class="font-headline-md text-headline-md text-primary font-bold">Acceso Rápido</h4>
-                        <p class="text-on-surface-variant font-body-sm text-body-sm mt-base">Registra ordeño o edita la información de las Finca y unidades de producción.</p>
-                        <div class="flex flex-col gap-2 w-full mt-4">
-                            <a href="ordeno.html" class="font-label-lg text-label-lg text-on-primary bg-primary px-4 py-2 rounded-lg w-full hover:brightness-110 transition-all active:scale-95 duration-150 flex justify-center items-center gap-1">
-                                <span class="material-symbols-outlined text-sm">add</span> Registrar Ordeño
-                            </a>
-                            <a href="unidad.html" class="font-label-lg text-label-lg text-primary border border-primary px-4 py-2 rounded-lg w-full hover:bg-primary hover:text-white transition-all active:scale-95 duration-150 flex justify-center items-center">
-                                Gestionar Finca
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="md:col-span-4 bg-white border border-outline-variant rounded-xl overflow-hidden shadow-sm flex flex-col mt-4">
-                        <div class="p-md bg-surface-container-low border-b border-outline-variant flex justify-between items-center">
-                            <h3 class="font-headline-md text-headline-md text-primary font-bold">Producción y Animales por Finca</h3>
-                            <a href="unidad.html" class="flex items-center gap-xs text-primary font-label-lg text-label-lg hover:underline">
-                                <span>Ver Detalles</span>
-                                <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
-                            </a>
-                        </div>
-                        <div class="p-md grid grid-cols-1 md:grid-cols-3 gap-md">
-                            <div v-for="unit in units" :key="unit.id" class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm flex flex-col group hover:border-primary/40 transition-colors">
-                                <img v-if="unit.image" :src="unit.image" class="w-full h-36 object-cover" :alt="unit.name"/>
-                                <div v-else class="w-full h-36 bg-surface-container flex items-center justify-center text-primary-container">
-                                    <span class="material-symbols-outlined text-[48px]" data-icon="house_siding">house_siding</span>
-                                </div>
-                                <div class="p-4 flex-1 flex flex-col justify-between text-left">
-                                    <div>
-                                        <h4 class="font-bold text-lg text-on-surface group-hover:text-primary transition-colors">{{ unit.name }}</h4>
-                                        <p class="text-xs text-on-surface-variant mb-4">Propietario: {{ unit.owner }}</p>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-4 border-t border-outline-variant/30 pt-3">
-                                        <div>
-                                            <p class="text-xs text-on-surface-variant font-label-md">Producción</p>
-                                            <p class="text-base font-bold text-primary">{{ unit.productionToday }} L</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-xs text-on-surface-variant font-label-md">Animales</p>
-                                            <p class="text-base font-bold text-on-surface">{{ unit.animalCount }} cabezas</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div v-if="units.length === 0" class="col-span-3 py-8 text-center text-on-surface-variant italic">No hay unidades registradas.</div>
                         </div>
                     </div>
                 </div>
@@ -682,7 +639,7 @@
         </div>
     </main>
 
-    <!-- BottomNavBar Shell -->
+    <!-- BottomNavBar Shell (Updated: Inicio, Ordeño, Finca, Inventario, Salud, Reportes, Perfil) -->
     <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-1 py-2 bg-surface dark:bg-inverse-surface border-t border-outline-variant dark:border-outline shadow-lg dark:shadow-none lg:hidden">
         <a v-if="currentUser" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200 cursor-pointer"
            :class="isActive('index.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="index.html">
@@ -705,8 +662,8 @@
             <span class="text-[10px] mt-0.5 leading-none">Inventario</span>
         </a>
         <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200 cursor-pointer"
-           :class="isActive('salud.html') || isActive('historial.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="salud.html">
-            <span class="material-symbols-outlined text-[20px]" :class="isActive('salud.html') || isActive('historial.html') ? 'fill-icon' : ''" :style="isActive('salud.html') || isActive('historial.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="health_and_safety">health_and_safety</span>
+           :class="isActive('salud.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="salud.html">
+            <span class="material-symbols-outlined text-[20px]" :class="isActive('salud.html') ? 'fill-icon' : ''" :style="isActive('salud.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="health_and_safety">health_and_safety</span>
             <span class="text-[10px] mt-0.5 leading-none">Salud</span>
         </a>
         <a v-if="currentUser && currentUser.role === 'Administrador'" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200 cursor-pointer"
