@@ -458,12 +458,6 @@
 <h2 class="font-headline-lg text-headline-lg text-emerald-700 dark:text-emerald-500">Control Inventario</h2>
 <p class="font-body-md text-body-md text-on-surface-variant">Gestión y monitoreo de suministros críticos para la producción Láctea.</p>
 </div>
-<div class="flex gap-3">
-<button @click="showAddModal = true" class="bg-primary text-on-primary font-label-lg text-label-lg px-6 py-2.5 rounded-lg flex items-center gap-2 shadow-md hover:brightness-110 active:scale-95 transition-all">
-<span class="material-symbols-outlined" data-icon="add">add</span>
-                    Nuevo Item
-                </button>
-</div>
 </div>
 <!-- Inventory Dashboard Stats (Bento Grid Style) -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
@@ -505,7 +499,7 @@
 <th class="px-6 py-4">Producto</th>
 <th class="px-6 py-4">Inventario Actual</th>
 <th class="px-6 py-4">Estado</th>
-<th class="px-6 py-4 text-right">Acciones</th>
+<th class="px-6 py-4 text-right" v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')">Acciones</th>
 </tr>
 </thead>
 <tbody class="font-body-md text-body-md">
@@ -515,8 +509,10 @@
 <td class="px-6 py-4">
 <span :class="item.status === 'OK' ? 'bg-primary/10 text-primary' : (item.status === 'BAJO' ? 'bg-tertiary/10 text-tertiary' : 'bg-error/10 text-error')" class="px-3 py-1 rounded-full text-[12px] font-bold">{{ item.status }}</span>
 </td>
-<td class="px-6 py-4 text-right">
-<button @click="adjustStock(item)" class="text-primary hover:bg-primary/10 px-4 py-2 rounded-lg font-label-md transition-all active:scale-95 border border-primary/20">Ajustar Inventario</button>
+<td class="px-6 py-4 text-right" v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')">
+<button @click="adjustStock(item)" class="w-10 h-10 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-on-primary transition-all flex items-center justify-center ml-auto cursor-pointer shadow-sm" title="Ajustar Inventario">
+  <span class="material-symbols-outlined text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
 </td>
 </tr>
 </tbody>
@@ -538,7 +534,7 @@
 <th class="px-6 py-4">Producto</th>
 <th class="px-6 py-4">Inventario Actual</th>
 <th class="px-6 py-4">Estado</th>
-<th class="px-6 py-4 text-right">Acciones</th>
+<th class="px-6 py-4 text-right" v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')">Acciones</th>
 </tr>
 </thead>
 <tbody class="font-body-md text-body-md">
@@ -548,8 +544,10 @@
 <td class="px-6 py-4">
 <span :class="item.status === 'OK' ? 'bg-primary/10 text-primary' : (item.status === 'BAJO' ? 'bg-tertiary/10 text-tertiary' : 'bg-error/10 text-error')" class="px-3 py-1 rounded-full text-[12px] font-bold">{{ item.status }}</span>
 </td>
-<td class="px-6 py-4 text-right">
-<button @click="adjustStock(item)" class="text-primary hover:bg-primary/10 px-4 py-2 rounded-lg font-label-md transition-all active:scale-95 border border-primary/20">Ajustar Inventario</button>
+<td class="px-6 py-4 text-right" v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')">
+<button @click="adjustStock(item)" class="w-10 h-10 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-on-primary transition-all flex items-center justify-center ml-auto cursor-pointer shadow-sm" title="Ajustar Inventario">
+  <span class="material-symbols-outlined text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
 </td>
 </tr>
 </tbody>
@@ -571,7 +569,7 @@
 <th class="px-6 py-4">Producto</th>
 <th class="px-6 py-4">Inventario Actual</th>
 <th class="px-6 py-4">Estado</th>
-<th class="px-6 py-4 text-right">Acciones</th>
+<th class="px-6 py-4 text-right" v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')">Acciones</th>
 </tr>
 </thead>
 <tbody class="font-body-md text-body-md">
@@ -581,8 +579,10 @@
 <td class="px-6 py-4">
 <span :class="item.status === 'OK' ? 'bg-primary/10 text-primary' : (item.status === 'BAJO' ? 'bg-tertiary/10 text-tertiary' : 'bg-error/10 text-error')" class="px-3 py-1 rounded-full text-[12px] font-bold">{{ item.status }}</span>
 </td>
-<td class="px-6 py-4 text-right">
-<button @click="adjustStock(item)" class="text-primary hover:bg-primary/10 px-4 py-2 rounded-lg font-label-md transition-all active:scale-95 border border-primary/20">Ajustar Inventario</button>
+<td class="px-6 py-4 text-right" v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')">
+<button @click="adjustStock(item)" class="w-10 h-10 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-on-primary transition-all flex items-center justify-center ml-auto cursor-pointer shadow-sm" title="Ajustar Inventario">
+  <span class="material-symbols-outlined text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
 </td>
 </tr>
 </tbody>
@@ -637,8 +637,8 @@
       <span class="text-[10px] mt-0.5 leading-none">Perfil</span>
     </a>
   </nav>
-<!-- FAB (Floating Action Button) - Add Item Contextual -->
-<button @click="showAddModal = true" class="fixed bottom-24 right-6 md:right-10 bg-primary text-on-primary w-14 h-14 rounded-full flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all md:hidden z-40">
+<!-- FAB (Floating Action Button) - Add Item Contextual (Solo para Admin o Veterinario) -->
+<button v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')" @click="showAddModal = true" class="fixed bottom-24 right-6 md:right-10 bg-primary text-on-primary w-14 h-14 rounded-full flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all z-40">
 <span class="material-symbols-outlined" data-icon="add">add</span>
 </button>
 
@@ -662,7 +662,7 @@
 </div>
 <div class="grid grid-cols-2 gap-sm">
 <div>
-<label class="block font-label-lg text-label-lg mb-xs text-on-surface-variant"> Inicial</label>
+<label class="block font-label-lg text-label-lg mb-xs text-on-surface-variant">Stock Inicial</label>
 <input v-model.number="newItem.stock" required class="w-full bg-surface-container-lowest border border-outline rounded-lg h-12 px-base focus:ring-2 focus:ring-primary outline-none text-body-md" type="number" min="0" step="0.1"/>
 </div>
 <div>
@@ -800,6 +800,11 @@
                     }
                 },
                 async adjustStock(item) {
+                    // Validar seguridad localmente también antes de ajustar
+                    if (!this.currentUser || (this.currentUser.role !== 'Administrador' && this.currentUser.role !== 'Veterinario')) {
+                        alert("No tienes permisos para realizar esta acción.");
+                        return;
+                    }
                     const newStockStr = prompt(`Ingrese el nuevo stock para ${item.name} (Actual: ${item.stock} ${item.unit}):`, item.stock);
                     if (newStockStr !== null) {
                         const newStock = parseFloat(newStockStr);
