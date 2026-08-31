@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-
 <html lang="es"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  <script src="local-db-fallback.js"></script>
+<script src="local-db-fallback.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <style>
@@ -131,8 +130,6 @@
     body {
       min-height: max(884px, 100dvh);
     }
-
-        /* Custom styles for dark mode */
         html.dark .glass-card {
             background: rgba(22, 32, 50, 0.8) !important;
             border-color: #25354e !important;
@@ -305,33 +302,6 @@
         html.dark .bg-primary:hover {
             background-color: #059669 !important;
         }
-        html.dark .bg-\[\#e3f2fd\] {
-            background-color: #1e3a8a !important;
-        }
-        html.dark .text-\[\#1565c0\] {
-            color: #93c5fd !important;
-        }
-        html.dark .bg-\[\#dcfce7\] {
-            background-color: #064e3b !important;
-        }
-        html.dark .text-\[\#14532d\] {
-            color: #a7f3d0 !important;
-        }
-        html.dark .text-\[\#2e7d32\] {
-            color: #a7f3d0 !important;
-        }
-        html.dark .text-\[\#c62828\] {
-            color: #fca5a5 !important;
-        }
-        html.dark svg path[stroke="#154212"] {
-            stroke: #10b981 !important;
-        }
-        html.dark svg circle[fill="#154212"] {
-            fill: #10b981 !important;
-        }
-        html.dark stop[stop-color="#154212"] {
-            stop-color: #10b981 !important;
-        }
         html.dark .shadow-sm,
         html.dark .shadow-md,
         html.dark .shadow-lg,
@@ -360,7 +330,7 @@
 <!-- Navigation Drawer -->
 <aside :class="showSidebar ? 'w-80 translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-20'" class="hidden lg:flex flex-col h-[calc(100vh-4rem)] fixed left-0 top-16 z-50 border-r border-outline-variant bg-surface-container-low transition-all duration-300 ease-in-out">
 <div v-if="showSidebar" class="px-6 py-4 border-b border-outline-variant/30">
-<p class="font-label-md text-label-md text-primary font-bold uppercase tracking-wider">Municipio Obispo</p>
+<p class="font-label-md text-label-md text-primary font-bold uppercase tracking-wider">El Manantial</p>
 <p class="text-[11px] text-on-surface-variant">Gestión Láctea</p>
 </div>
 <nav class="flex-1 mt-4 px-2 overflow-y-auto custom-scrollbar flex flex-col gap-1">
@@ -425,7 +395,7 @@
        showSidebar ? 'p-1 hover:bg-surface-container-highest gap-3 justify-start' : 'p-0 w-12 h-12 mx-auto justify-center hover:bg-surface-container-highest',
        isActive('usuarios.html') ? 'bg-primary-container text-on-primary-container font-bold' : ''
      ]">
-    <img v-if="currentUser && currentUser.avatar && ((currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('data:')) || currentUser.avatar.startsWith('data:'))" alt="User avatar" class="w-10 h-10 min-w-[40px] rounded-full bg-secondary-container object-cover" :src="currentUser.avatar"/>
+    <img v-if="currentUser && currentUser.avatar && ((currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('data:')))" alt="User avatar" class="w-10 h-10 min-w-[40px] rounded-full bg-secondary-container object-cover" :src="currentUser.avatar"/>
     <div v-else class="w-10 h-10 min-w-[40px] rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm">
       {{ currentUser ? currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'US' }}
     </div>
@@ -468,13 +438,13 @@
 </header>
 
 <div class="px-margin-mobile md:px-margin-desktop py-4 max-w-7xl mx-auto">
-<!-- Breadcrumbs -->
+<!-- Breadcrumbs / Botón Volver Dinámico Corregido -->
 <nav class="flex items-center gap-2 mb-6 text-on-surface-variant">
-<a href="unidad.html" class="font-label-md text-label-md hover:underline">Unidad</a>
-<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
-<a href="salud.html" class="font-label-md text-label-md hover:underline">Salud Animal</a>
-<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
-<span class="font-label-md text-label-md font-bold text-primary">{{ animal.id }} {{ animal.name }}</span>
+<a :href="backUrl" class="flex items-center gap-1 font-label-md text-[14px] text-primary font-bold hover:underline">
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+    {{ backText }}
+</a>
+<span class="font-label-md text-[14px] font-bold text-on-surface">/ {{ animal.id }} {{ animal.name }}</span>
 </nav>
 <!-- Header Section -->
 <section class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-lg">
@@ -615,49 +585,43 @@ No hay eventos clínicos registrados para este animal.
 </main>
 <!-- BottomNavBar (Mobile Only) -->
 <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-1 py-2 bg-surface dark:bg-inverse-surface border-t border-outline-variant dark:border-outline shadow-lg dark:shadow-none lg:hidden">
-    <!-- Inicio -->
     <a v-if="currentUser" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('index.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="index.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('index.html') ? 'fill-icon' : ''" :style="isActive('index.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="analytics">analytics</span>
       <span class="text-[10px] mt-0.5 leading-none">Inicio</span>
     </a>
-    <!-- Ordeño -->
     <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('ordeno.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="ordeno.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('ordeno.html') ? 'fill-icon' : ''" :style="isActive('ordeno.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="opacity">opacity</span>
       <span class="text-[10px] mt-0.5 leading-none">Ordeño</span>
     </a>
-    <!-- Finca -->
     <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('unidad.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="unidad.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('unidad.html') ? 'fill-icon' : ''" :style="isActive('unidad.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="location_on">location_on</span>
       <span class="text-[10px] mt-0.5 leading-none">Finca</span>
     </a>
-    <!--Invetario -->
     <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('inventario.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="inventario.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('inventario.html') ? 'fill-icon' : ''" :style="isActive('inventario.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="inventory">inventory</span>
       <span class="text-[10px] mt-0.5 leading-none">Inventario</span>
     </a>
-    <!-- Salud -->
     <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('salud.html') || isActive('historial.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="salud.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('salud.html') || isActive('historial.html') ? 'fill-icon' : ''" :style="isActive('salud.html') || isActive('historial.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="health_and_safety">health_and_safety</span>
       <span class="text-[10px] mt-0.5 leading-none">Salud</span>
     </a>
-    <!-- Reportes -->
     <a v-if="currentUser && currentUser.role === 'Administrador'" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('reportes.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="reportes.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('reportes.html') ? 'fill-icon' : ''" :style="isActive('reportes.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="description">description</span>
       <span class="text-[10px] mt-0.5 leading-none">Reportes</span>
     </a>
-    <!-- Perfil -->
     <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('usuarios.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="usuarios.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('usuarios.html') ? 'fill-icon' : ''" :style="isActive('usuarios.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="group">group</span>
       <span class="text-[10px] mt-0.5 leading-none">Perfil</span>
     </a>
   </nav>
+
 <!-- New Health Event Modal & Vue mount -->
 <div v-if="showEventModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
   <div class="bg-white rounded-xl border border-outline-variant p-md max-w-md w-full shadow-xl text-left">
@@ -710,8 +674,8 @@ No hay eventos clínicos registrados para este animal.
     createApp({
         data() {
             return {
-                    isDarkMode: false,
-                    currentUser: null,
+                isDarkMode: false,
+                currentUser: null,
                 animal: {
                     id: '',
                     name: '',
@@ -741,54 +705,72 @@ No hay eventos clínicos registrados para este animal.
                 }
             };
         },
-        mounted() {
-                const theme = localStorage.getItem('theme') || 'light';
-                this.isDarkMode = theme === 'dark';
-                if (this.isDarkMode) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
+        computed: {
+            backUrl() {
+                const params = new URLSearchParams(window.location.search);
+                const from = params.get('from');
+                
+                if (from === 'unidad') return 'unidad.html';
+                if (from === 'salud') return 'salud.html';
+                
+                const referrer = document.referrer;
+                if (referrer.includes('unidad.html')) return 'unidad.html';
+                return 'salud.html';
+            },
+            backText() {
+                const params = new URLSearchParams(window.location.search);
+                const from = params.get('from');
+                
+                if (from === 'unidad' || document.referrer.includes('unidad.html')) {
+                    return 'Volver a Lote';
                 }
+                return 'Volver a Salud';
+            }
+        },
+        mounted() {
+            const theme = localStorage.getItem('theme') || 'light';
+            this.isDarkMode = theme === 'dark';
+            if (this.isDarkMode) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
 
-                const userStr = localStorage.getItem('loggedInUser');
-                if (userStr) {
-                    this.currentUser = JSON.parse(userStr);
-                    // Force logout if account status is Inactive
-                    if (this.currentUser.status !== 'Activo') {
-                        localStorage.removeItem('loggedInUser');
-                        window.location.href = 'login.html';
-                        return;
-                    }
-                    // Verify status on server to sign out inactive sessions on reload
-                    fetch(`/api/users/${this.currentUser.id}`)
-                        .then(res => {
-                            if (res.ok) return res.json();
-                            throw new Error('User not found');
-                        })
-                        .then(user => {
-                            if (user.status !== 'Activo') {
-                                localStorage.removeItem('loggedInUser');
-                                window.location.href = 'login.html';
-                            } else {
-                                localStorage.setItem('loggedInUser', JSON.stringify(user));
-                                this.currentUser = user;
-                            }
-                        })
-                        .catch(err => console.warn("Could not verify status on server, keeping local session", err));
-
-                    // Role based guards
-                    if (this.currentUser.role === 'Operario') {
-                        window.location.href = 'ordeno.html';
-                        return;
-                    }
-
-                } else {
+            const userStr = localStorage.getItem('loggedInUser');
+            if (userStr) {
+                this.currentUser = JSON.parse(userStr);
+                if (this.currentUser.status !== 'Activo') {
+                    localStorage.removeItem('loggedInUser');
                     window.location.href = 'login.html';
                     return;
                 }
+                fetch(`/api/users/${this.currentUser.id}`)
+                    .then(res => {
+                        if (res.ok) return res.json();
+                        throw new Error('User not found');
+                    })
+                    .then(user => {
+                        if (user.status !== 'Activo') {
+                            localStorage.removeItem('loggedInUser');
+                            window.location.href = 'login.html';
+                        } else {
+                            localStorage.setItem('loggedInUser', JSON.stringify(user));
+                            this.currentUser = user;
+                        }
+                    })
+                    .catch(err => console.warn("Could not verify status on server, keeping local session", err));
+
+                if (this.currentUser.role === 'Operario') {
+                    window.location.href = 'ordeno.html';
+                    return;
+                }
+
+            } else {
+                window.location.href = 'login.html';
+                return;
+            }
 
             this.fetchAnimalDetails();
-            // Bind scale micro-interactions
             document.querySelectorAll('button, a').forEach(el => {
                 el.addEventListener('mousedown', () => { el.style.transform = 'scale(0.96)'; });
                 el.addEventListener('mouseup', () => { el.style.transform = 'scale(1)'; });
@@ -796,29 +778,27 @@ No hay eventos clínicos registrados para este animal.
             });
         },
         methods: {
-                toggleTheme() {
-                    this.isDarkMode = !this.isDarkMode;
-                    if (this.isDarkMode) {
-                        document.documentElement.classList.add('dark');
-                        localStorage.setItem('theme', 'dark');
-                    } else {
-                        document.documentElement.classList.remove('dark');
-                        localStorage.setItem('theme', 'light');
-                    }
-                },
-
-                logout() {
-                    localStorage.removeItem('loggedInUser');
-                    window.location.href = 'login.html';
-                },
-
+            toggleTheme() {
+                this.isDarkMode = !this.isDarkMode;
+                if (this.isDarkMode) {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                }
+            },
+            logout() {
+                localStorage.removeItem('loggedInUser');
+                window.location.href = 'login.html';
+            },
             isActive(page) {
                 const path = window.location.pathname;
                 return path.includes(page) || (page === 'index.html' && (path.endsWith('/') || path.endsWith('/index.html') || path === ''));
             },
             getAnimalIdFromUrl() {
                 const params = new URLSearchParams(window.location.search);
-                return params.get('id') || 'L-402'; // default to L-402
+                return params.get('id') || 'L-402';
             },
             async fetchAnimalDetails() {
                 const id = this.getAnimalIdFromUrl();
@@ -828,8 +808,6 @@ No hay eventos clínicos registrados para este animal.
                         this.animal = await res.json();
                         this.editNotesText = this.animal.notes || '';
                     } else {
-                        console.error("Animal not found, fetching default");
-                        // try L-402 specifically
                         const fallbackRes = await fetch('/api/animals/L-402');
                         if (fallbackRes.ok) {
                             this.animal = await fallbackRes.json();
