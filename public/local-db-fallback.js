@@ -1,443 +1,353 @@
-<!DOCTYPE html>
-<html class="dark" lang="es"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-<script src="local-db-fallback.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "on-error-container": "#93000a",
-                    "on-primary-container": "#9dd090",
-                    "on-secondary-fixed-variant": "#454747",
-                    "outline": "#72796e",
-                    "primary": "#154212",
-                    "secondary-container": "#dfe0e0",
-                    "outline-variant": "#c2c9bb",
-                    "surface": "#f8f9ff",
-                    "on-surface-variant": "#42493e",
-                    "secondary": "#5d5f5f",
-                    "tertiary-fixed": "#ffd9e4",
-                    "on-background": "#0d1c2e",
-                    "on-tertiary-container": "#ffaac8",
-                    "surface-container": "#e6eeff",
-                    "on-secondary": "#ffffff",
-                    "surface-container-high": "#dce9ff",
-                    "surface-tint": "#3b6934",
-                    "inverse-on-surface": "#eaf1ff",
-                    "inverse-surface": "#233144",
-                    "secondary-fixed-dim": "#c6c6c7",
-                    "tertiary": "#60233e",
-                    "primary-container": "#2d5a27",
-                    "secondary-fixed": "#e2e2e2",
-                    "surface-container-highest": "#d5e3fc",
-                    "on-tertiary-fixed-variant": "#71314c",
-                    "primary-fixed-dim": "#a1d494",
-                    "on-tertiary-fixed": "#3b0520",
-                    "on-secondary-container": "#616363",
-                    "on-error": "#ffffff",
-                    "surface-variant": "#d5e3fc",
-                    "on-secondary-fixed": "#1a1c1c",
-                    "on-primary": "#ffffff",
-                    "on-primary-fixed-variant": "#23501e",
-                    "surface-container-lowest": "#ffffff",
-                    "error": "#ba1a1a",
-                    "surface-bright": "#f8f9ff",
-                    "surface-dim": "#ccdbf3",
-                    "tertiary-container": "#7c3a55",
-                    "on-primary-fixed": "#002201",
-                    "tertiary-fixed-dim": "#ffb0cc",
-                    "background": "#f8f9ff",
-                    "on-surface": "#0d1c2e",
-                    "on-tertiary": "#ffffff",
-                    "surface-container-low": "#eff4ff",
-                    "inverse-primary": "#a1d494",
-                    "primary-fixed": "#bcf0ae",
-                    "error-container": "#ffdad6"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.25rem",
-                    "lg": "0.5rem",
-                    "xl": "0.75rem",
-                    "full": "9999px"
-            },
-            "spacing": {
-                    "lg": "40px",
-                    "gutter": "24px",
-                    "md": "24px",
-                    "margin-mobile": "16px",
-                    "margin-desktop": "32px",
-                    "xl": "64px",
-                    "sm": "12px",
-                    "xs": "4px",
-                    "base": "8px"
-            },
-            "fontFamily": {
-                    "label-md": ["Hanken Grotesk"],
-                    "body-sm": ["Hanken Grotesk"],
-                    "headline-lg": ["Work Sans"],
-                    "data-tabular": ["Hanken Grotesk"],
-                    "display-lg": ["Work Sans"],
-                    "label-lg": ["Hanken Grotesk"],
-                    "body-lg": ["Hanken Grotesk"],
-                    "body-md": ["Hanken Grotesk"],
-                    "headline-md": ["Work Sans"]
-            }
-          },
-        },
+(function() {
+  const STORAGE_KEY = 'elmanantial_local_db_v3';
+
+  const defaultDb = {
+    users: [
+      { id: 1, name: "Fracisco Molina", role: "Administrador", status: "Activo", email: "admin@elmanantial.com", password: "admin123", avatar: "ADMIN" },
+      { id: 2, name: "Dra. Maria Mendoza", role: "Veterinario", status: "Activo", email: "veterinario@elmanantial.com", password: "vet123", avatar: "VET" },
+      { id: 3, name: "Jose Sanchez", role: "Operario", status: "Activo", email: "jose@elmanantial.com", password: "ope123", avatar: "JS" },
+      { id: 4, name: "Miguel Hernández", role: "Obrero", status: "Activo", email: "miguel@elmanantial.com", password: "obm123", avatar: "MH" },
+      { id: 5, name: "Juan Rodríguez", role: "Obrero", status: "Activo", email: "juan@elmanantial.com", password: "obj123", avatar: "JR"},
+      { id: 6, name: "Pedro Rojas", role: "Obrero", status: "Activo", email: "pedro@elmanantial.com", password: "obp123", avatar: "PR"},
+      { id: 7, name: "Luis Berrios", role: "Obrero", status: "Activo", email: "luis@elmanantial.com", password: "obl123", avatar: "LB"},
+    ],
+    inventory: [
+      { id: 1, name: "Concentrado Lechero 22%", category: "feed", stock: 2450, unit: "kg", status: "OK" },
+      { id: 2, name: "Sales Minerales Premium", category: "feed", stock: 45, unit: "kg", status: "BAJO" },
+      { id: 3, name: "Vacuna Antiaftosa (Frasco 50 ds)", category: "medicine", stock: 2, unit: "unidades", status: "CRÍTICO" },
+      { id: 4, name: "Antibiótico Oxitetraciclina", category: "medicine", stock: 12, unit: "frascos", status: "OK" },
+      { id: 5, name: "Sellador de Pezones (GET-ordeño)", category: "hygiene", stock: 15, unit: "galones", status: "BAJO" }
+    ],
+    units: [
+      { id: 1, name: "El Manantial", owner: "Administración Central", animalCount: 210, productionToday: 1450, healthAvg: "Excelente", status: "Activa", image: "ADMIN" }
+    ],
+    milkingRecords: [
+      { id: 1, unitName: "Lote A - Potrero El Sol", liters: 45.5, shift: "Mañana", time: "06:45 AM", status: "VERIFICADO", date: "2026-05-23" },
+      { id: 2, unitName: "Lote B - Hacienda", liters: 32.8, shift: "Mañana", time: "07:12 AM", status: "VERIFICADO", date: "2026-05-23" },
+      { id: 3, unitName: "Lote A - Potrero El Sol", liters: 28.0, shift: "Mañana", time: "07:45 AM", status: "VERIFICADO", date: "2026-05-23" },
+      { id: 4, unitName: "Lote B - Hacienda", liters: 12.2, shift: "Mañana", time: "05:30 AM", status: "PENDIENTE", date: "2026-05-23" }
+    ],
+    animals: [
+      {
+        id: "L-402",
+        name: "Clarabel",
+        breed: "Holstein",
+        age: 4.5,
+        weight: 580,
+        status: "Saludable",
+        productionTotal: 12450,
+        lastVaccination: "15 Oct 2023",
+        pregnancyStatus: "Confirmado (3m)",
+        image: "https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?q=80&w=200&auto=format&fit=crop",
+        notes: "Animal muestra excelente recuperación post-parto. Se recomienda mantener suplementación mineral."
+      },
+      {
+        id: "J-115",
+        name: "Margarita",
+        breed: "Jersey",
+        age: 3.0,
+        weight: 480,
+        status: "En Tratamiento",
+        productionTotal: 8900,
+        lastVaccination: "20 Sep 2023",
+        pregnancyStatus: "No preñada",
+        image: "https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=200&auto=format&fit=crop",
+        notes: "En tratamiento por mastitis leve en ubre anterior derecha."
+      },
+      {
+        id: "G-089",
+        name: "Estrella",
+        breed: "Guernsey",
+        age: 6.0,
+        weight: 510,
+        status: "Bajo Observación",
+        productionTotal: 15400,
+        lastVaccination: "05 Ago 2023",
+        pregnancyStatus: "Confirmado (5m)",
+        image: "https://images.unsplash.com/photo-1527153857715-3908f2ae5e61?q=80&w=200&auto=format&fit=crop",
+        notes: "Chequeo mensual de gestación y monitoreo de cojera leve."
       }
-    </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    ],
+    healthEvents: [
+      { id: 1, animalId: "L-402", type: "Vacunación", details: "Aftosa (Lote: #AFT-2023-09)", veterinarian: "Dra. Mendoza", date: "15 Oct 2023" },
+      { id: 2, animalId: "L-402", type: "Tratamiento", details: "Mastitis Leve (Cefalexina - 5 días) - Finalizado con éxito", veterinarian: "Dra. Mendoza", date: "22 Ago 2023" }
+    ],
+    checkups: [
+      { id: 1, title: "Vacunación Aftosa", target: "Lote A - Corrales Norte", priority: "Urgente", date: "24 Oct" },
+      { id: 2, title: "Control de Mastitis", target: "Lote B", priority: "Programado", date: "27 Oct" }
+    ]
+  };
+
+  function readLocalDb() {
+    let dbStr = localStorage.getItem(STORAGE_KEY);
+    if (!dbStr) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultDb));
+      return JSON.parse(JSON.stringify(defaultDb));
+    }
+    try {
+      const db = JSON.parse(dbStr);
+      let modified = false;
+
+      defaultDb.users.forEach(defUser => {
+        const userIndex = db.users.findIndex(u => u.email.toLowerCase() === defUser.email.toLowerCase());
+        if (userIndex === -1) {
+          db.users.push(defUser);
+          modified = true;
+        } else {
+          if (db.users[userIndex].password !== defUser.password) {
+            db.users[userIndex].password = defUser.password;
+            modified = true;
+          }
         }
-        html.dark body {
-            background-color: #0b0f19 !important;
-            color: #e2e8f0 !important;
+      });
+
+      if (modified) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+      }
+      return db;
+    } catch (e) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultDb));
+      return JSON.parse(JSON.stringify(defaultDb));
+    }
+  }
+
+  function writeLocalDb(db) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+  }
+
+  if (window.location.protocol === 'file:' || window.location.hostname.endsWith('github.io') || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    const originalFetch = window.fetch;
+
+    window.fetch = function(input, init) {
+      let url = typeof input === 'string' ? input : input.url;
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        const parsed = new URL(url);
+        url = parsed.pathname;
+      }
+
+      if (!url.includes('/api/')) {
+        return originalFetch(input, init);
+      }
+
+      const db = readLocalDb();
+      const method = init && init.method ? init.method.toUpperCase() : 'GET';
+      let requestBody = null;
+      if (init && init.body) {
+        try {
+          requestBody = JSON.parse(init.body);
+        } catch (e) {
+          requestBody = init.body;
         }
-        html.dark header, html.dark nav {
-            background-color: #0b0f19 !important;
-            border-color: #1e293b !important;
+      }
+
+      let responseData = null;
+      let responseStatus = 200;
+
+      try {
+        if (url === '/api/login' && (method === 'POST' || method === 'GET')) {
+          let { email, password } = requestBody || {};
+          
+          if (!email && url.includes('?')) {
+            const urlParams = new URLSearchParams(input.split('?')[1]);
+            email = urlParams.get('email');
+            password = urlParams.get('password');
+          }
+
+          // Limpiar espacios o mayúsculas accidentales al tipear en escritorio
+          const cleanEmail = email ? email.trim().toLowerCase() : '';
+          const cleanPass = password ? password.trim() : '';
+
+          const user = db.users.find(u => u.email.toLowerCase() === cleanEmail && u.password === cleanPass);
+          if (!user) {
+            responseData = { error: "Credenciales incorrectas" };
+            responseStatus = 401;
+          } else if (user.status !== 'Activo') {
+            responseData = { error: "Su cuenta ha sido desactivada." };
+            responseStatus = 403;
+          } else {
+            // Guardar sesión actual en localStorage para prevenir cierres al cambiar de pestaña/sección
+            localStorage.setItem('elmanantial_current_user', JSON.stringify(user));
+            responseData = user;
+          }
+        } 
+        // NUEVO: Soportar endpoints comunes de verificación de sesión al navegar por Inicio, Ordeño o Finca
+        else if (url === '/api/session' || url === '/api/auth' || url === '/api/me') {
+          const storedUser = localStorage.getItem('elmanantial_current_user');
+          if (storedUser) {
+            responseData = JSON.parse(storedUser);
+          } else {
+            // Fallback al primer usuario o error si no hay sesión
+            responseData = db.users[0];
+          }
         }
-        html.dark .card-custom {
-            background-color: #131b2e !important;
-            border-color: #1e293b !important;
-            color: #e2e8f0 !important;
+        else if (url.startsWith('/api/users/') && method === 'DELETE') {
+          const id = parseInt(url.split('/').pop());
+          const index = db.users.findIndex(u => u.id === id);
+          if (index !== -1) {
+            db.users.splice(index, 1);
+            writeLocalDb(db);
+            responseData = { message: "User deleted successfully" };
+          } else {
+            responseData = { error: "User not found" };
+            responseStatus = 404;
+          }
         }
-        html.dark input, html.dark select {
-            background-color: #131b2e !important;
-            border-color: #1e293b !important;
-            color: #e2e8f0 !important;
+        else if (url.startsWith('/api/users/') && method === 'GET') {
+          const id = parseInt(url.split('/').pop());
+          const user = db.users.find(u => u.id === id);
+          if (user) {
+            responseData = user;
+          } else {
+            responseData = { error: "User not found" };
+            responseStatus = 404;
+          }
+        } 
+        else if (url.startsWith('/api/users/') && url.endsWith('/status') && method === 'PUT') {
+          const id = parseInt(url.split('/')[3]);
+          const user = db.users.find(u => u.id === id);
+          if (user) {
+            user.status = requestBody.status;
+            writeLocalDb(db);
+            responseData = user;
+          } else {
+            responseData = { error: "User not found" };
+            responseStatus = 404;
+          }
+        } 
+        else if (url.startsWith('/api/users/') && method === 'PUT') {
+          const id = parseInt(url.split('/').pop());
+          const user = db.users.find(u => u.id === id);
+          if (user) {
+            user.name = requestBody.name || user.name;
+            user.email = requestBody.email || user.email;
+            user.password = requestBody.password || user.password;
+            user.avatar = requestBody.avatar || user.avatar;
+            user.role = requestBody.role || user.role;
+            writeLocalDb(db);
+            responseData = user;
+          } else {
+            responseData = { error: "User not found" };
+            responseStatus = 404;
+          }
+        } 
+        else if (url === '/api/users' && method === 'GET') {
+          responseData = db.users;
+        } 
+        else if (url === '/api/users' && method === 'GET') {
+          const newUser = {
+            id: db.users.length > 0 ? Math.max(...db.users.map(u => u.id)) + 1 : 1,
+            name: requestBody.name,
+            role: requestBody.role,
+            status: requestBody.status || "Activo",
+            email: requestBody.email || (requestBody.name.split(' ')[0].toLowerCase() + "@elmanantial.com"),
+            password: requestBody.password || "12345",
+            avatar: requestBody.avatar || requestBody.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+          };
+          db.users.push(newUser);
+          writeLocalDb(db);
+          responseData = newUser;
+          responseStatus = 201;
+        } 
+        else if (url === '/api/dashboard' && method === 'GET') {
+          const todayLiters = db.milkingRecords.reduce((sum, rec) => sum + rec.liters, 0);
+          const activeUnitsCount = db.units.filter(u => u.status === 'Activa').length;
+          const criticalItemsCount = db.inventory.filter(i => i.status === 'CRÍTICO').length;
+
+          responseData = {
+            todayLiters: parseFloat(todayLiters.toFixed(1)),
+            activeUnits: activeUnitsCount,
+            criticalStockAlerts: criticalItemsCount,
+            milkingRecords: db.milkingRecords.slice(0, 5),
+            healthyPercentage: db.animals.length > 0 ? Math.round((db.animals.filter(a => a.status === 'Saludable').length / db.animals.length) * 100) : 100,
+            units: db.units
+          };
+        } 
+        else if (url === '/api/inventory' && method === 'GET') {
+          responseData = db.inventory;
+        } 
+        else if (url === '/api/inventory' && method === 'POST') {
+          const newItem = {
+            id: db.inventory.length > 0 ? Math.max(...db.inventory.map(i => i.id)) + 1 : 1,
+            name: requestBody.name,
+            category: requestBody.category,
+            stock: parseFloat(requestBody.stock),
+            unit: requestBody.unit || "kg",
+            status: requestBody.status || "OK"
+          };
+          db.inventory.push(newItem);
+          writeLocalDb(db);
+          responseData = newItem;
+          responseStatus = 201;
+        } 
+        else if (url === '/api/units' && method === 'GET') {
+          responseData = db.units;
+        } 
+        else if (url === '/api/milking' && method === 'GET') {
+          responseData = db.milkingRecords;
+        } 
+        else if (url === '/api/milking' && method === 'POST') {
+          const now = new Date();
+          let hours = now.getHours();
+          const minutes = String(now.getMinutes()).padStart(2, '0');
+          const ampm = hours >= 12 ? 'PM' : 'AM';
+          hours = hours % 12 || 12;
+          const timeStr = `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
+          const dateStr = now.toISOString().split('T')[0];
+
+          const newRecord = {
+            id: db.milkingRecords.length > 0 ? Math.max(...db.milkingRecords.map(m => m.id)) + 1 : 1,
+            unitName: requestBody.unitName,
+            liters: parseFloat(requestBody.liters),
+            shift: requestBody.shift === 'morning' ? 'Mañana' : 'Tarde',
+            time: timeStr,
+            status: "VERIFICADO",
+            date: dateStr
+          };
+          db.milkingRecords.unshift(newRecord);
+          writeLocalDb(db);
+          responseData = newRecord;
+          responseStatus: 201;
+        } 
+        else if (url === '/api/animals' && method === 'GET') {
+          responseData = db.animals;
+        } 
+        else if (url === '/api/health-summary' && method === 'GET') {
+          responseData = {
+            healthyPercentage: 100,
+            inTreatment: 0,
+            underObservation: 0,
+            birthsThisMonth: 0,
+            checkups: db.checkups,
+            animals: db.animals,
+            healthEvents: db.healthEvents
+          };
+        } 
+        else if (url === '/api/reports' && method === 'GET') {
+          responseData = {
+            totalLiters: 1450,
+            avgLitersPerCow: 18.4,
+            projectionNextMonth: 1566,
+            chartData: [],
+            ranking: [{ rank: 1, name: "Lote A", liters: "800" }, { rank: 2, name: "Lote B", liters: "650" }],
+            records: db.milkingRecords
+          };
+        } 
+        else {
+          responseData = { error: "Not found" };
+          responseStatus = 404;
         }
-    </style>
-  </head>
-<body class="font-body-md text-body-md overflow-x-hidden text-on-surface bg-[#0b0f19]" id="app">
+      } catch (err) {
+        responseData = { error: "Internal server error mock" };
+        responseStatus = 500;
+      }
 
-<!-- Main Content Area -->
-<main class="pt-16 pb-24 md:pb-8">
-<!-- Top App Bar (Ajustada exactamente con el tamaño y diseño de la referencia) -->
-<header class="flex justify-between items-center w-full h-16 bg-[#0b0f19] border-b border-[#1e293b] fixed top-0 left-0 z-50">
-<div class="flex items-center h-full min-w-0 flex-1">
-    <div class="w-16 md:w-20 flex justify-center items-center h-full border-r border-[#1e293b]/30 flex-shrink-0">
-        <div @click="showSidebar = !showSidebar" class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-[#00c875] flex items-center justify-center text-slate-950 cursor-pointer hover:brightness-110 active:scale-95 transition-all shadow-sm">
-            <span class="material-symbols-outlined font-bold" data-icon="agriculture">agriculture</span>
-        </div>
-    </div>
-    <h2 class="font-headline-md text-lg md:text-headline-md font-bold text-[#00c875] ml-3 md:ml-4 whitespace-nowrap truncate">El Manantial</h2>
-</div>
+      const responseInit = {
+        status: responseStatus,
+        statusText: responseStatus === 200 || responseStatus === 201 ? 'OK' : 'Error',
+        headers: { 'Content-Type': 'application/json' }
+      };
 
-<div class="flex items-center gap-3 pr-4 md:pr-8">
-  <button @click="toggleTheme" class="w-10 h-10 rounded-full hover:bg-slate-800 text-slate-300 transition-colors flex items-center justify-center cursor-pointer" :title="isDarkMode ? 'Modo Claro' : 'Modo Oscuro'">
-    <span class="material-symbols-outlined text-[20px]">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
-  </button>
-  <button @click="logout" class="w-10 h-10 rounded-full hover:bg-red-500/10 text-slate-300 hover:text-red-400 transition-colors flex items-center justify-center cursor-pointer" title="Cerrar Sesión">
-    <span class="material-symbols-outlined text-[20px]" data-icon="logout">logout</span>
-  </button>
-  <a href="usuarios.html" class="w-10 h-10 rounded-full overflow-hidden border-2 border-[#00c875] flex items-center justify-center bg-[#00c875] text-slate-950 text-sm font-bold active:scale-95 transition-transform duration-150 shadow-sm flex-shrink-0">
-    <img v-if="profileForm.avatar && (profileForm.avatar.startsWith('http') || profileForm.avatar.startsWith('data:'))" alt="Perfil" class="w-full h-full object-cover" :src="profileForm.avatar"/>
-    <span v-else>{{ profileForm.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() }}</span>
-  </a>
-</div>
-</header>
-
-<div class="px-margin-mobile md:px-margin-desktop py-8 max-w-7xl mx-auto relative">
-    <!-- Título de la sección -->
-    <h1 class="font-headline-lg text-2xl font-bold text-[#00c875] mb-6">Configuración de Usuarios</h1>
-
-    <!-- Buscador móvil -->
-    <div class="relative mb-6 md:hidden">
-        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-        <input type="text" placeholder="Buscar por nombre o cargo..." class="w-full pl-10 pr-4 py-3 bg-[#131b2e] card-custom border border-[#1e293b] rounded-xl focus:outline-none focus:border-[#00c875] text-slate-200">
-    </div>
-
-    <!-- Tarjeta de Usuario Actual (Admin) -->
-    <div class="bg-[#131b2e] card-custom border border-[#1e293b] rounded-2xl p-6 mb-8 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div class="flex items-center gap-4">
-            <img :src="profileForm.avatar" alt="Admin User" class="w-16 h-16 rounded-full object-cover border-2 border-[#00c875]">
-            <div>
-                <div class="flex items-center gap-2">
-                    <h3 class="font-headline-md text-xl font-bold text-[#00c875]">{{ profileForm.name }}</h3>
-                </div>
-                <p class="text-slate-400 text-sm mt-0.5">{{ profileForm.role }} • {{ profileForm.email }}</p>
-                <span class="inline-block mt-2 bg-[#00c875]/20 text-[#00c875] px-2.5 py-0.5 rounded-full text-xs font-semibold">Sesión Activa</span>
-            </div>
-        </div>
-        <!-- Botones de Configuración y Cerrar Sesión -->
-        <div class="flex items-center gap-3 w-full md:w-auto">
-            <button @click="showConfigModal = true" class="flex-1 md:flex-none w-full md:w-48 h-16 flex items-center justify-center gap-3 px-4 bg-[#131b2e] hover:bg-slate-800 text-slate-200 rounded-2xl text-sm font-semibold transition-all border border-[#1e293b] shadow-sm cursor-pointer">
-                <span class="material-symbols-outlined text-xl">settings</span>
-                <span class="flex flex-col text-left leading-tight">
-                    <span>Configuración</span>
-                </span>
-            </button>
-            <button @click="logout" class="flex-1 md:flex-none w-full md:w-48 h-16 flex items-center justify-center gap-3 px-4 bg-[#131b2e] hover:bg-red-950/40 text-red-400 rounded-2xl text-sm font-semibold transition-all border border-red-900/50 shadow-sm cursor-pointer">
-                <span class="material-symbols-outlined text-xl">logout</span>
-                <span class="flex flex-col text-left leading-tight">
-                    <span>Cerrar</span>
-                    <span>Sesión</span>
-                </span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Sección: Filtrar por Rol -->
-    <div class="mb-8">
-        <div class="flex items-center gap-2 mb-4">
-            <span class="material-symbols-outlined text-[#00c875] text-sm">security</span>
-            <h2 class="font-headline-md font-bold text-[#00c875] text-xs uppercase tracking-wider">Filtrar por Rol</h2>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Rol Admin -->
-            <div class="bg-[#131b2e] card-custom border border-[#1e293b] rounded-2xl p-5 relative hover:shadow-md transition-all">
-                <div class="flex justify-between items-start mb-2">
-                    <div class="w-10 h-10 rounded-xl bg-[#00c875]/10 flex items-center justify-center text-[#00c875]">
-                        <span class="material-symbols-outlined">admin_panel_settings</span>
-                    </div>
-                    <span class="bg-[#00c875]/20 text-[#00c875] px-3 py-1 rounded-full text-xs font-semibold">Acceso Total</span>
-                </div>
-                <h3 class="font-headline-md font-bold text-white text-lg">Admin</h3>
-                <p class="text-slate-400 text-sm mt-1">Gestión completa de inventario, finanzas, usuarios y logs.</p>
-            </div>
-
-            <!-- Rol Veterinario -->
-            <div class="bg-[#131b2e] card-custom border border-[#1e293b] rounded-2xl p-5 relative hover:shadow-md transition-all">
-                <div class="flex justify-between items-start mb-2">
-                    <div class="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center text-pink-400">
-                        <span class="material-symbols-outlined">medical_services</span>
-                    </div>
-                    <span class="bg-pink-500/20 text-pink-300 px-3 py-1 rounded-full text-xs font-semibold">Salud Animal</span>
-                </div>
-                <h3 class="font-headline-md font-bold text-white text-lg">Veterinario</h3>
-                <p class="text-slate-400 text-sm mt-1">Acceso a historias clínicas, vacunas y control sanitario.</p>
-            </div>
-
-            <!-- Rol Operario -->
-            <div class="bg-[#131b2e] card-custom border border-[#1e293b] rounded-2xl p-5 relative hover:shadow-md transition-all">
-                <div class="flex justify-between items-start mb-2">
-                    <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300">
-                        <span class="material-symbols-outlined">agriculture</span>
-                    </div>
-                    <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-full text-xs font-semibold">Producción</span>
-                </div>
-                <h3 class="font-headline-md font-bold text-white text-lg">Operario</h3>
-                <p class="text-slate-400 text-sm mt-1">Registro diario de ordeño, alimentación y movimientos de ganado.</p>
-            </div>
-
-            <!-- Mostrar Todos -->
-            <div class="bg-[#131b2e] card-custom border-2 border-[#00c875] rounded-2xl p-5 relative shadow-sm">
-                <div class="flex justify-between items-start mb-2">
-                    <div class="w-10 h-10 rounded-xl bg-[#00c875] text-slate-950 flex items-center justify-center font-bold">
-                        <span class="material-symbols-outlined">group</span>
-                    </div>
-                    <span class="bg-[#00c875] text-slate-950 px-3 py-1 rounded-full text-xs font-bold">Todo el Personal</span>
-                </div>
-                <h3 class="font-headline-md font-bold text-white text-lg">Mostrar Todos</h3>
-                <p class="text-slate-400 text-sm mt-1">Visualizar la lista completa de personal registrado en El Manantial.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sección: Lista de Usuarios -->
-    <div>
-        <div class="flex items-center gap-2 mb-4">
-            <span class="material-symbols-outlined text-[#00c875] text-sm">group</span>
-            <h2 class="font-headline-md font-bold text-[#00c875] text-xs uppercase tracking-wider">Lista de Usuarios</h2>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Dra. Maria Mendoza -->
-            <div class="bg-[#131b2e] card-custom border border-[#1e293b] rounded-2xl p-4 flex items-center justify-between shadow-sm">
-                <div class="flex items-center gap-3">
-                    <img src="https://images.unsplash.com/photo-1594824813511-2094c979d50a?q=80&w=200&auto=format&fit=crop" alt="Maria Mendoza" class="w-12 h-12 rounded-full object-cover">
-                    <div>
-                        <h4 class="font-bold text-white">Dra. Maria Mendoza</h4>
-                        <div class="flex items-center gap-2 mt-1">
-                            <span class="bg-pink-500/20 text-pink-300 px-2 py-0.5 rounded text-[10px] font-bold">VETERINARIO</span>
-                            <span class="flex items-center gap-1 text-xs text-[#00c875] font-medium"><span class="w-2 h-2 rounded-full bg-[#00c875] inline-block"></span> Activo</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 text-slate-400">
-                    <button class="p-2 hover:bg-slate-800 rounded-lg transition-colors cursor-pointer" title="Editar"><span class="material-symbols-outlined text-sm">sync</span></button>
-                    <button class="p-2 hover:bg-red-500/10 hover:text-red-400 rounded-lg transition-colors cursor-pointer" title="Eliminar"><span class="material-symbols-outlined text-sm">delete</span></button>
-                </div>
-            </div>
-
-            <!-- Jose Sanchez -->
-            <div class="bg-[#131b2e] card-custom border border-[#1e293b] rounded-2xl p-4 flex items-center justify-between shadow-sm">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-full bg-[#00c875]/20 text-[#00c875] flex items-center justify-center font-bold text-lg">JS</div>
-                    <div>
-                        <h4 class="font-bold text-white">Jose Sanchez</h4>
-                        <div class="flex items-center gap-2 mt-1">
-                            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[10px] font-bold">OPERARIO</span>
-                            <span class="flex items-center gap-1 text-xs text-[#00c875] font-medium"><span class="w-2 h-2 rounded-full bg-[#00c875] inline-block"></span> Activo</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 text-slate-400">
-                    <button class="p-2 hover:bg-slate-800 rounded-lg transition-colors cursor-pointer" title="Editar"><span class="material-symbols-outlined text-sm">sync</span></button>
-                    <button class="p-2 hover:bg-red-500/10 hover:text-red-400 rounded-lg transition-colors cursor-pointer" title="Eliminar"><span class="material-symbols-outlined text-sm">delete</span></button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Botón flotante para agregar -->
-<button class="fixed right-6 bottom-20 z-50 w-14 h-14 bg-[#00c875] hover:bg-emerald-600 text-slate-950 rounded-full flex items-center justify-center shadow-lg transition-transform active:scale-95 cursor-pointer">
-    <span class="material-symbols-outlined text-2xl font-bold">add</span>
-</button>
-
-<!-- Modal de Configuración de Perfil -->
-<div v-if="showConfigModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-    <div class="bg-[#131b2e] border border-[#1e293b] rounded-2xl p-6 max-w-lg w-full shadow-2xl">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="font-headline-md text-xl font-bold text-[#00c875] flex items-center gap-2">
-                <span class="material-symbols-outlined">settings</span> Configuración
-            </h3>
-            <button @click="showConfigModal = false" class="text-slate-400 hover:text-white transition-colors cursor-pointer">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-        
-        <!-- Formulario -->
-        <form @submit.prevent="saveProfile" class="space-y-4">
-            <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Nombre Completo</label>
-                <input type="text" v-model="profileForm.name" class="w-full px-4 py-2.5 bg-[#0b0f19] border border-[#1e293b] rounded-xl text-sm text-slate-200 focus:outline-none focus:border-[#00c875]" required>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Correo Electrónico</label>
-                <input type="email" v-model="profileForm.email" class="w-full px-4 py-2.5 bg-[#0b0f19] border border-[#1e293b] rounded-xl text-sm text-slate-200 focus:outline-none focus:border-[#00c875]" required>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Rol / Cargo</label>
-                <input type="text" v-model="profileForm.role" class="w-full px-4 py-2.5 bg-[#0b0f19] border border-[#1e293b] rounded-xl text-sm text-slate-200 focus:outline-none focus:border-[#00c875]" disabled>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Nueva Contraseña</label>
-                <div class="relative">
-                    <input :type="showPassword ? 'text' : 'password'" v-model="profileForm.password" placeholder="••••••••" class="w-full px-4 py-2.5 bg-[#0b0f19] border border-[#1e293b] rounded-xl text-sm text-slate-200 focus:outline-none focus:border-[#00c875]">
-                    <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white cursor-pointer">
-                        <span class="material-symbols-outlined text-xl">{{ showPassword ? 'visibility' : 'visibility_off' }}</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Botones de Acción -->
-            <div class="flex flex-row gap-3 pt-4">
-                <button type="button" @click="clearForm" class="flex-1 h-14 flex items-center justify-center gap-2 px-2 bg-[#131b2e] hover:bg-slate-800 text-slate-300 rounded-2xl text-sm font-semibold transition-all border border-[#1e293b] shadow-sm cursor-pointer whitespace-nowrap">
-                    <span class="material-symbols-outlined text-lg">brush</span>
-                    <span>Limpiar</span>
-                </button>
-                <button type="button" @click="showConfigModal = false" class="flex-1 h-14 flex items-center justify-center gap-2 px-2 bg-[#131b2e] hover:bg-slate-800 text-slate-300 rounded-2xl text-sm font-semibold transition-all border border-[#1e293b] shadow-sm cursor-pointer whitespace-nowrap">
-                    <span>Cancelar</span>
-                </button>
-                <button type="submit" class="flex-1 h-14 flex flex-col items-center justify-center px-2 bg-[#00c875] hover:bg-emerald-600 text-slate-950 rounded-2xl text-sm font-bold transition-all shadow-sm cursor-pointer leading-tight whitespace-nowrap">
-                    <span>Guardar</span>
-                    <span>Cambios</span>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-</main>
-
-<!-- Bottom Nav Bar -->
-<nav class="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-1 py-2 bg-[#0b0f19] border-t border-[#1e293b] shadow-lg transition-colors">
-    <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200 text-slate-400 hover:text-[#00c875]" href="index.html">
-      <span class="material-symbols-outlined text-[20px]">analytics</span>
-      <span class="text-[10px] mt-0.5 leading-none">Inicio</span>
-    </a>
-    <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200 text-slate-400 hover:text-[#00c875]" href="ordeno.html">
-      <span class="material-symbols-outlined text-[20px]">opacity</span>
-      <span class="text-[10px] mt-0.5 leading-none">Ordeño</span>
-    </a>
-    <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200 text-slate-400 hover:text-[#00c875]" href="unidad.html">
-      <span class="material-symbols-outlined text-[20px]">location_on</span>
-      <span class="text-[10px] mt-0.5 leading-none">Finca</span>
-    </a>
-    <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200 text-slate-400 hover:text-[#00c875]" href="inventario.html">
-      <span class="material-symbols-outlined text-[20px]">inventory</span>
-      <span class="text-[10px] mt-0.5 leading-none">Inventario</span>
-    </a>
-    <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200 text-slate-400 hover:text-[#00c875]" href="salud.html">
-      <span class="material-symbols-outlined text-[20px]">health_and_safety</span>
-      <span class="text-[10px] mt-0.5 leading-none">Salud</span>
-    </a>
-    <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200 text-slate-400 hover:text-[#00c875]" href="reportes.html">
-      <span class="material-symbols-outlined text-[20px]">description</span>
-      <span class="text-[10px] mt-0.5 leading-none">Reportes</span>
-    </a>
-    <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200 text-[#00c875] font-bold" href="usuarios.html">
-      <span class="material-symbols-outlined text-[20px]">group</span>
-      <span class="text-[10px] mt-0.5 leading-none">Perfil</span>
-    </a>
-</nav>
-
-<script>
-        const { createApp } = Vue;
-        createApp({
-            data() {
-                return {
-                    isDarkMode: true,
-                    showSidebar: false,
-                    showConfigModal: false,
-                    showPassword: false,
-                    currentUser: null,
-                    profileForm: {
-                        name: 'Admin User',
-                        email: 'admin@elmanantial.com',
-                        role: 'Administrador',
-                        password: '',
-                        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop'
-                    }
-                };
-            },
-            mounted() {
-                const userStr = localStorage.getItem('loggedInUser');
-                if (userStr) {
-                    this.currentUser = JSON.parse(userStr);
-                    this.profileForm.name = this.currentUser.name || 'Admin User';
-                    this.profileForm.email = this.currentUser.email || 'admin@elmanantial.com';
-                    this.profileForm.role = this.currentUser.role || 'Administrador';
-                    this.profileForm.avatar = this.currentUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop';
-                }
-            },
-            methods: {
-                toggleTheme() {
-                    this.isDarkMode = !this.isDarkMode;
-                },
-                logout() {
-                    localStorage.removeItem('loggedInUser');
-                    window.location.href = 'login.html';
-                },
-                clearForm() {
-                    this.profileForm.name = '';
-                    this.profileForm.email = '';
-                    this.profileForm.password = '';
-                },
-                saveProfile() {
-                    if(this.currentUser) {
-                        this.currentUser.name = this.profileForm.name;
-                        this.currentUser.email = this.profileForm.email;
-                        if(this.profileForm.password) {
-                            this.currentUser.password = this.profileForm.password;
-                        }
-                        localStorage.setItem('loggedInUser', JSON.stringify(this.currentUser));
-                    }
-                    this.showConfigModal = false;
-                }
-            }
-        }).mount('#app');
-    </script>
-</body></html>
-
+      return Promise.resolve(new Response(JSON.stringify(responseData), responseInit));
+    };
+  }
+})();
