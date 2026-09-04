@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html class="dark" lang="es"><head>
+<html class="dark" lang="es">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>pwa_el_manantial</title>
+<!-- Enlace al manifiesto de la PWA -->
+<link rel="manifest" href="/manifest.json">
+<!-- Hojas de estilos personalizadas de la carpeta css -->
+<link rel="stylesheet" href="css/custom.css">
+<link rel="stylesheet" href="css/input.css">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<!-- Respaldo local para funcionar sin internet -->
 <script src="local-db-fallback.js"></script>
+<!-- Lógica de sincronización cuando vuelve la red -->
+<script src="js/sync.js"></script>
+<!-- Lógica general de la interfaz -->
+<script src="js/app.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -147,13 +160,13 @@
         <span class="material-symbols-outlined" :class="isActive('index.html') ? 'fill-icon' : ''" data-icon="analytics">analytics</span>
         <span v-if="showSidebar" class="font-body-md text-body-md whitespace-nowrap">Panel Control</span>
       </a>
-      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
+      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario' || currentUser.role?.startsWith('Obrero'))" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
          :class="[showSidebar ? 'px-4 py-3 mx-2 justify-start gap-3 w-[calc(100%-16px)]' : 'p-0 w-12 h-12 mx-auto justify-center', isActive('ordeno.html') ? 'bg-[#154212]/10 dark:bg-[#10b981]/10 text-[#154212] dark:text-[#10b981] font-bold' : 'text-[#72796e] dark:text-[#94a3b8] hover:bg-slate-100 dark:hover:bg-[#1e293b]']"
          href="ordeno.html">
         <span class="material-symbols-outlined" :class="isActive('ordeno.html') ? 'fill-icon' : ''" data-icon="opacity">opacity</span>
         <span v-if="showSidebar" class="font-body-md text-body-md whitespace-nowrap">Registro Ordeño</span>
       </a>
-      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
+      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario' || currentUser.role?.startsWith('Obrero'))" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
          :class="[showSidebar ? 'px-4 py-3 mx-2 justify-start gap-3 w-[calc(100%-16px)]' : 'p-0 w-12 h-12 mx-auto justify-center', isActive('unidad.html') ? 'bg-[#154212]/10 dark:bg-[#10b981]/10 text-[#154212] dark:text-[#10b981] font-bold' : 'text-[#72796e] dark:text-[#94a3b8] hover:bg-slate-100 dark:hover:bg-[#1e293b]']"
          href="unidad.html">
         <span class="material-symbols-outlined" :class="isActive('unidad.html') ? 'fill-icon' : ''" data-icon="location_on">location_on</span>
@@ -189,30 +202,31 @@
 <main class="lg:ml-20 pt-14 pb-24 md:pb-8">
 <!-- Top App Bar -->
 <header class="flex justify-between items-center w-full h-16 bg-surface border-b border-outline-variant fixed top-0 left-0 z-50">
-  <div class="flex items-center h-full min-w-0 flex-1">
-    <div class="w-16 md:w-20 flex justify-center items-center h-full border-r border-outline-variant/30 flex-shrink-0">
-      <div @click="showSidebar = !showSidebar" class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-[#154212] dark:bg-[#10b981] flex items-center justify-center text-white dark:text-[#0b0f19] cursor-pointer hover:brightness-110 active:scale-95 transition-all shadow-sm">
-        <span class="material-symbols-outlined text-[#f8f9ff] dark:text-[#0b0f19]" data-icon="agriculture">agriculture</span>
-      </div>
+    <div class="flex items-center h-full min-w-0 flex-1">
+        <div class="w-16 md:w-20 flex justify-center items-center h-full border-r border-outline-variant/30 flex-shrink-0">
+                  <div @click="showSidebar = !showSidebar" class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-[#154212] dark:bg-[#10b981] flex items-center justify-center text-white dark:text-[#0b0f19] cursor-pointer hover:brightness-110 active shadow-sm">
+                    <span class="material-symbols-outlined text-[#f8f9ff] dark:text-[#0b0f19]" data-icon="agriculture">agriculture</span>    
+                  </div>
+        </div>
+        <h2 class="font-headline-md text-base md:text-2xl font-bold text-[#154212] dark:text-[#10b981] ml-2 md:ml-4 whitespace-nowrap truncate">El Manantial</h2>
     </div>
-    <h2 class="font-headline-md text-lg md:text-headline-md font-bold text-[#154212] dark:text-[#10b981] ml-2 md:ml-4 whitespace-nowrap truncate">El Manantial</h2>
-  </div>
-<div class="flex items-center gap-3 pr-margin-mobile md:pr-margin-desktop">
-  <button @click="toggleTheme" class="w-10 h-10 rounded-full hover:bg-surface-container-highest dark:hover:bg-slate-700 text-on-surface-variant dark:text-[#94a3b8] transition-colors flex items-center justify-center cursor-pointer" :title="isDarkMode ? 'Modo Claro' : 'Modo Oscuro'">
+  <div class="flex items-center gap-4 pr-margin-mobile md:pr-margin-desktop">
+  <button @click="toggleTheme" class="w-10 h-10 rounded-full hover:bg-surface-container-highest dark:hover:bg-slate-700 text-on-surface-variant dark:text-gray-300 transition-colors flex items-center justify-center cursor-pointer" :title="isDarkMode ? 'Modo Claro' : 'Modo Oscuro'">
     <span class="material-symbols-outlined text-[20px]">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
   </button>
 
-  <button @click="logout" class="w-10 h-10 rounded-full hover:bg-error/10 text-on-surface-variant hover:text-error transition-colors flex items-center justify-center cursor-pointer" title="Cerrar Sesión">
+<button @click="logout" class="w-10 h-10 rounded-full hover:bg-error/10 text-on-surface-variant hover:text-error transition-colors flex items-center justify-center cursor-pointer" title="Cerrar Sesión">
     <span class="material-symbols-outlined text-[20px]" data-icon="logout">logout</span>
   </button>
-  <a href="usuarios.html" class="block ml-1">
-    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop" alt="Usuario" class="w-9 h-9 rounded-full object-cover border-2 border-[#154212] dark:border-[#10b981] hover:opacity-90 transition-opacity"/>
-  </a>
-</div>
-</header>
-
+ <a href="usuarios.html" class="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-[#154212] dark:border-[#10b981] flex items-center justify-center bg-[#154212] dark:bg-[#10b981] text-[#ffffff] dark:text-[#101726] text-sm font-bold active:scale-95 transition-transform duration-150 shadow-sm">
+     <img v-if="currentUser && currentUser.avatar && (currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('data:'))" alt="User profile" class="w-full h-full object-cover" :src="currentUser.avatar" />
+     <span v-else>{{ currentUser ? currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'US' }}</span>
+ </a>
+ </div>
+ </header>
 <div class="px-margin-mobile md:px-margin-desktop py-8 max-w-7xl mx-auto">
     
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
     <div v-if="!loteSeleccionado">
         <div class="flex items-center justify-between mb-lg">
             <div>
@@ -222,7 +236,8 @@
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-            <div class="bg-white dark:bg-[#162032] border border-slate-200 dark:border-[#162032] rounded-xl overflow-hidden group hover:shadow-lg transition-all duration-300">
+            <!-- Lote A Visible para Administrador, Operario, Miguel (Obrero1) y Juan (Obrero2) -->
+            <div v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario' || currentUser.email === 'miguel@elmanantial.com' || currentUser.email === 'juan@elmanantial.com')" class="bg-white dark:bg-[#162032] border border-slate-200 dark:border-[#162032] rounded-xl overflow-hidden group hover:shadow-lg transition-all duration-300">
                 <div class="h-40 w-full relative">
                     <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?q=80&w=600&auto=format&fit=crop" alt="Lote A" />
                     <div class="absolute top-sm right-sm">
@@ -247,7 +262,8 @@
                 </div>
             </div>
             
-            <div class="bg-white dark:bg-[#162032] border border-slate-200 dark:border-[#162032] rounded-xl overflow-hidden group hover:shadow-lg transition-all duration-300">
+            <!-- Lote B Visible para Administrador, Operario, Pedro (Obrero3) y Luis (Obrero4) -->
+            <div v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario' || currentUser.email === 'pedro@elmanantial.com' || currentUser.email === 'luis@elmanantial.com')" class="bg-white dark:bg-[#162032] border border-slate-200 dark:border-[#162032] rounded-xl overflow-hidden group hover:shadow-lg transition-all duration-300">
                 <div class="h-40 w-full relative">
                     <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?q=80&w=600&auto=format&fit=crop" alt="Lote B" />
                     <div class="absolute top-sm right-sm">
@@ -281,7 +297,7 @@
                     <span class="material-symbols-outlined text-sm">arrow_back</span> Volver a Lotes
                 </button>
                 <h1 class="font-headline-lg text-2xl font-bold text-[#154212] dark:text-[#10b981]">Registro Del Lote {{ loteSeleccionado }}</h1>
-                <p class="font-body-md text-body-md text-slate-600 dark:text-[#94a3b8]">Listado detallado de las 20 cabezas asignadas y su rendimiento lácteo.</p>
+                <p class="font-body-md text-body-md text-slate-600 dark:text-[#94a3b8]">Listado detallado de las cabezas asignadas y su rendimiento lácteo.</p>
             </div>
         </div>
 
@@ -301,7 +317,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200 dark:divide-[#162032] text-slate-800 dark:text-white font-body-sm">
-                        <tr v-for="(vaca, index) in listaVacas" :key="vaca.id" class="hover:bg-slate-50 dark:hover:bg-[#1e293b]/50 transition-colors">
+                        <tr v-for="(vaca, index) in listaVacas" :key="vaca.idAnimal" class="hover:bg-slate-50 dark:hover:bg-[#1e293b]/50 transition-colors">
                             <td class="py-3 px-4 text-slate-500 dark:text-[#94a3b8] font-bold">{{ index + 1 }}</td>
                             <td class="py-3 px-4">El Manantial</td>
                             <td class="py-3 px-4 font-bold text-[#154212] dark:text-[#10b981]">{{ vaca.idAnimal }}</td>
@@ -314,7 +330,7 @@
                                 </span>
                             </td>
                             <td class="py-3 px-4 text-center">
-                                <a :href="'historial.html?id=' + vaca.idAnimal" 
+                                <a :href="'historial.html?id=' + encodeURIComponent(vaca.idAnimal)" 
                                    class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-[#101727] hover:bg-[#154212] hover:text-white dark:hover:bg-[#10b981] dark:hover:text-[#0b0f19] text-[#154212] dark:text-[#10b981] transition-all border border-slate-200 dark:border-[#162032]"
                                    title="Ver Historial de la Vaca">
                                     <span class="material-symbols-outlined text-[18px]">chevron_right</span>
@@ -421,10 +437,116 @@
           <span class="material-symbols-outlined text-[20px]" :class="isActive('usuarios.html') ? 'fill-icon' : ''" data-icon="group">group</span>
           <span class="text-[10px] mt-0.5 leading-none">Perfil</span>
         </a>
+       </template>
+       
+    <!-- Obrero1 Menu (Miguel Hernández - MH) -->
+    <template v-else-if="currentUser && currentUser.email === 'miguel@elmanantial.com'">
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('index.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="index.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('index.html') ? 'fill-icon' : ''" data-icon="analytics">analytics</span>
+          <span class="text-[10px] mt-0.5 leading-none">Inicio</span>
+        </a>
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('ordeno.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="ordeno.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('ordeno.html') ? 'fill-icon' : ''" data-icon="opacity">opacity</span>
+          <span class="text-[10px] mt-0.5 leading-none">Ordeño</span>
+        </a>
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('unidad.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="unidad.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('unidad.html') ? 'fill-icon' : ''" data-icon="location_on">location_on</span>
+          <span class="text-[10px] mt-0.5 leading-none">Finca</span>
+        </a>
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('usuarios.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="usuarios.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('usuarios.html') ? 'fill-icon' : ''" data-icon="group">group</span>
+          <span class="text-[10px] mt-0.5 leading-none">Perfil</span>
+        </a>
     </template>
+    
+    <!-- Obrero2 Menu (Juan Rodríguez - JR) -->
+    <template v-else-if="currentUser && currentUser.email === 'juan@elmanantial.com'">
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('index.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="index.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('index.html') ? 'fill-icon' : ''" data-icon="analytics">analytics</span>
+          <span class="text-[10px] mt-0.5 leading-none">Inicio</span>
+        </a>
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('ordeno.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="ordeno.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('ordeno.html') ? 'fill-icon' : ''" data-icon="opacity">opacity</span>
+          <span class="text-[10px] mt-0.5 leading-none">Ordeño</span>
+        </a>
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('unidad.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="unidad.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('unidad.html') ? 'fill-icon' : ''" data-icon="location_on">location_on</span>
+          <span class="text-[10px] mt-0.5 leading-none">Finca</span>
+        </a>
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('usuarios.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="usuarios.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('usuarios.html') ? 'fill-icon' : ''" data-icon="group">group</span>
+          <span class="text-[10px] mt-0.5 leading-none">Perfil</span>
+        </a>
+    </template>
+    
+    <!-- Obrero3 Menu (Pedro Rojas - PR) -->
+    <template v-else-if="currentUser && currentUser.email === 'pedro@elmanantial.com'">
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('index.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="index.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('index.html') ? 'fill-icon' : ''" data-icon="analytics">analytics</span>
+          <span class="text-[10px] mt-0.5 leading-none">Inicio</span>
+        </a>
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('ordeno.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="ordeno.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('ordeno.html') ? 'fill-icon' : ''" data-icon="opacity">opacity</span>
+          <span class="text-[10px] mt-0.5 leading-none">Ordeño</span>
+        </a>
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('unidad.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="unidad.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('unidad.html') ? 'fill-icon' : ''" data-icon="location_on">location_on</span>
+          <span class="text-[10px] mt-0.5 leading-none">Finca</span>
+        </a>
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('usuarios.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="usuarios.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('usuarios.html') ? 'fill-icon' : ''" data-icon="group">group</span>
+          <span class="text-[10px] mt-0.5 leading-none">Perfil</span>
+        </a>
+    </template>
+    
+    <!-- Obrero4 Menu (Luis Berrios - LB) -->
+    <template v-else-if="currentUser && currentUser.email === 'luis@elmanantial.com'">
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('index.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="index.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('index.html') ? 'fill-icon' : ''" data-icon="analytics">analytics</span>
+          <span class="text-[10px] mt-0.5 leading-none">Inicio</span>
+        </a>
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('ordeno.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="ordeno.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('ordeno.html') ? 'fill-icon' : ''" data-icon="opacity">opacity</span>
+          <span class="text-[10px] mt-0.5 leading-none">Ordeño</span>
+        </a>
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('unidad.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="unidad.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('unidad.html') ? 'fill-icon' : ''" data-icon="location_on">location_on</span>
+          <span class="text-[10px] mt-0.5 leading-none">Finca</span>
+        </a>
+        <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+           :class="isActive('usuarios.html') ? 'text-[#154212] dark:text-[#10b981] font-bold' : 'nav-inactive-light dark:nav-inactive-dark font-normal'" href="usuarios.html">
+          <span class="material-symbols-outlined text-[20px]" :class="isActive('usuarios.html') ? 'fill-icon' : ''" data-icon="group">group</span>
+          <span class="text-[10px] mt-0.5 leading-none">Perfil</span>
+        </a>
+    </template>
+    
 </nav>
 
 <script>
+ // Registro del Service Worker para habilitar las funciones PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
+                    .catch(err => console.log('Error al registrar el Service Worker:', err));
+            });
+        }
+
         const { createApp } = Vue;
         createApp({
             data() {
@@ -439,16 +561,43 @@
             mounted() {
                 const userStr = localStorage.getItem('loggedInUser');
                 if (userStr) {
-                    this.currentUser = JSON.parse(userStr);
-                    if (this.currentUser.email === 'veterinario@elmanantial.com') {
-                        this.currentUser.role = 'Veterinario';
-                    } else if (this.currentUser.email === 'jose@elmanantial.com') {
-                        this.currentUser.role = 'Operario';
-                    } else if (this.currentUser.email === 'admin@elmanantial.com') {
-                        this.currentUser.role = 'Administrador';
+                    try {
+                        this.currentUser = JSON.parse(userStr);
+                        // Doble parsing de seguridad ante estructuras serializadas anidadas en PWA multi-dispositivo
+                        if (typeof this.currentUser === 'string') {
+                            this.currentUser = JSON.parse(this.currentUser);
+                        }
+                    } catch (e) {
+                        console.error("Error al parsear usuario logueado:", e);
+                        localStorage.removeItem('loggedInUser');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    if (this.currentUser && this.currentUser.email) {
+                        if (this.currentUser.email === 'veterinario@elmanantial.com') {
+                            this.currentUser.role = 'Veterinario';
+                        } else if (this.currentUser.email === 'jose@elmanantial.com') {
+                            this.currentUser.role = 'Operario';
+                        } else if (this.currentUser.email === 'miguel@elmanantial.com') {
+                            this.currentUser.role = 'Obrero1';
+                            this.currentUser.name = 'Miguel Hernández';
+                        } else if (this.currentUser.email === 'juan@elmanantial.com') {
+                            this.currentUser.role = 'Obrero2';
+                            this.currentUser.name = 'Juan Rodríguez';
+                        } else if (this.currentUser.email === 'pedro@elmanantial.com') {
+                            this.currentUser.role = 'Obrero3';
+                            this.currentUser.name = 'Pedro Rojas';
+                        } else if (this.currentUser.email === 'luis@elmanantial.com') {
+                            this.currentUser.role = 'Obrero4';
+                            this.currentUser.name = 'Luis Berrios';
+                        } else if (this.currentUser.email === 'admin@elmanantial.com') {
+                            this.currentUser.role = 'Administrador';
+                        }
                     }
                 } else {
                     window.location.href = 'login.html';
+                    return;
                 }
 
                 const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -489,6 +638,20 @@
                             estado: 'Activa'
                         });
                     }
+
+                    // Filtrado seguro multiplataforma según credenciales de obreros:
+                    if (this.currentUser && this.currentUser.email) {
+                        if (this.currentUser.email === 'miguel@elmanantial.com' && lote === 'A') {
+                            vacas = vacas.slice(0, 10);
+                        } else if (this.currentUser.email === 'juan@elmanantial.com' && lote === 'A') {
+                            vacas = vacas.slice(10, 20);
+                        } else if (this.currentUser.email === 'pedro@elmanantial.com' && lote === 'B') {
+                            vacas = vacas.slice(0, 10);
+                        } else if (this.currentUser.email === 'luis@elmanantial.com' && lote === 'B') {
+                            vacas = vacas.slice(10, 20);
+                        }
+                    }
+
                     this.listaVacas = vacas;
                 },
                 toggleTheme() {
@@ -511,4 +674,5 @@
             }
         }).mount('#app');
     </script>
-</body></html>
+</body>
+</html>
