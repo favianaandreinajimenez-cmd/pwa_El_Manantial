@@ -1,12 +1,29 @@
 <!DOCTYPE html>
-<html class="light" lang="es"><head>
+<html class="light" lang="es">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>pwa_el_manantial</title>
+<!-- Configuración PWA corregida para coincidir con el Service Worker -->
+<link rel="manifest" href="/manifest.json"/>
+<meta name="theme-color" content="#154212"/>
+
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  <script src="local-db-fallback.js"></script>
+<!-- Respaldo local para funcionar sin internet -->
+<script src="local-db-fallback.js"></script>
+<!-- Lógica de sincronización cuando vuelve la red -->
+<script src="js/sync.js"></script>
+<!-- Lógica general de la interfaz -->
+<script src="js/app.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Work+Sans:wght@600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+
+<!-- Archivos CSS externos -->
+<link rel="stylesheet" href="css/input.css">
+<link rel="stylesheet" href="css/custom.css">
+
 <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -343,7 +360,7 @@
 <!-- Navigation Drawer -->
 <aside :class="showSidebar ? 'w-80 translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-20'" class="hidden lg:flex flex-col h-[calc(100vh-4rem)] fixed left-0 top-16 z-50 border-r border-outline-variant bg-surface-container-low transition-all duration-300 ease-in-out">
 <div v-if="showSidebar" class="px-6 py-4 border-b border-outline-variant/30">
-<p class="font-label-md text-label-md text-primary font-bold uppercase tracking-wider">Municipio Obispo</p>
+<p class="font-label-md text-label-md text-primary font-bold uppercase tracking-wider">El Manantial</p>
 <p class="text-[11px] text-on-surface-variant">Gestión Láctea</p>
 </div>
 <nav class="flex-1 mt-4 px-2 overflow-y-auto custom-scrollbar flex flex-col gap-1">
@@ -356,7 +373,7 @@
         <span class="material-symbols-outlined" :class="isActive('index.html') ? 'fill-icon' : ''" :style="isActive('index.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="analytics">analytics</span>
         <span v-if="showSidebar" class="font-body-md text-body-md whitespace-nowrap transition-all duration-300">Panel Control</span>
       </a>
-      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
+      <a v-if="currentUser && currentUser.role !== 'Obrero'" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
          :class="[
            showSidebar ? 'px-4 py-3 mx-2 justify-start gap-3 w-[calc(100%-16px)]' : 'p-0 w-12 h-12 mx-auto justify-center',
            isActive('ordeno.html') ? 'bg-primary-container text-on-primary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-highest'
@@ -365,7 +382,7 @@
         <span class="material-symbols-outlined" :class="isActive('ordeno.html') ? 'fill-icon' : ''" :style="isActive('ordeno.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="opacity">opacity</span>
         <span v-if="showSidebar" class="font-body-md text-body-md whitespace-nowrap transition-all duration-300">Registro Ordeño</span>
       </a>
-      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
+      <a v-if="currentUser && currentUser.role !== 'Obrero'" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
          :class="[
            showSidebar ? 'px-4 py-3 mx-2 justify-start gap-3 w-[calc(100%-16px)]' : 'p-0 w-12 h-12 mx-auto justify-center',
            isActive('unidad.html') ? 'bg-primary-container text-on-primary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-highest'
@@ -427,28 +444,29 @@
 <main class="lg:ml-20 pt-16 pb-24 md:pb-8">
 <!-- Top App Bar -->
 <header class="flex justify-between items-center w-full h-16 bg-surface border-b border-outline-variant fixed top-0 left-0 z-50">
-<div class="flex items-center h-full min-w-0 flex-1">
-    <div class="w-16 md:w-20 flex justify-center items-center h-full border-r border-outline-variant/30 flex-shrink-0">
-        <div @click="showSidebar = !showSidebar" class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-primary flex items-center justify-center text-on-primary cursor-pointer hover:brightness-110 active:scale-95 transition-all shadow-sm">
-            <span class="material-symbols-outlined" data-icon="agriculture">agriculture</span>
+    <div class="flex items-center h-full min-w-0 flex-1">
+        <div class="w-16 md:w-20 flex justify-center items-center h-full border-r border-outline-variant/30 flex-shrink-0">
+            <div @click="showSidebar = !showSidebar" class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-primary flex items-center justify-center text-on-primary cursor-pointer hover:brightness-110 active:scale-95 transition-all shadow-sm">
+                <span class="material-symbols-outlined" data-icon="agriculture">agriculture</span>
+            </div>
         </div>
-    </div>
-    <h2 class="font-headline-md text-lg md:text-headline-md font-bold text-primary ml-2 md:ml-4 whitespace-nowrap truncate">El Manantial</h2>
-</div>
-<div class="flex items-center gap-4 pr-margin-mobile md:pr-margin-desktop">
-  <button @click="toggleTheme" class="w-10 h-10 rounded-full hover:bg-surface-container-highest dark:hover:bg-slate-700 text-on-surface-variant dark:text-gray-300 transition-colors flex items-center justify-center cursor-pointer" :title="isDarkMode ? 'Modo Claro' : 'Modo Oscuro'">
-    <span class="material-symbols-outlined text-[20px]">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
-  </button>
+        <h2 class="font-headline-md text-base md:text-2xl font-bold text-primary ml-2 md:ml-4 whitespace-nowrap truncate">El Manantial</h2>
 
-<button @click="logout" class="w-10 h-10 rounded-full hover:bg-error/10 text-on-surface-variant hover:text-error transition-colors flex items-center justify-center cursor-pointer" title="Cerrar Sesión">
-    <span class="material-symbols-outlined text-[20px]" data-icon="logout">logout</span>
+    </div>
+    <div class="flex items-center gap-4 pr-margin-mobile md:pr-margin-desktop">
+        <button @click="toggleTheme" class="w-10 h-10 rounded-full hover:bg-surface-container-highest dark:hover:bg-slate-700 text-on-surface-variant dark:text-gray-300 transition-colors flex items-center justify-center cursor-pointer" :title="isDarkMode ? 'Modo Claro' : 'Modo Oscuro'">
+            <span class="material-symbols-outlined text-[20px]">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
+        </button>
+        
+        <button @click="logout" class="w-10 h-10 rounded-full hover:bg-error/10 text-on-surface-variant hover:text-error transition-colors flex items-center justify-center cursor-pointer" title="Cerrar Sesión">
+            <span class="material-symbols-outlined text-[20px]" data-icon="logout">logout</span>
   </button>
-  <a href="usuarios.html" class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container flex items-center justify-center bg-primary text-on-primary text-sm font-bold active:scale-95 transition-transform duration-150 shadow-sm">
-    <img v-if="currentUser && currentUser.avatar && (currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('data:'))" alt="User profile" class="w-full h-full object-cover" :src="currentUser.avatar"/>
-    <span v-else>{{ currentUser ? currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'US' }}</span>
+   <a href="usuarios.html" class="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-[#154212] dark:border-[#10b981] flex items-center justify-center bg-[#154212] dark:bg-[#10b981] text-[#ffffff] dark:text-[#101726] text-sm font-bold active:scale-95 transition-transform duration-150 shadow-sm">
+      <img v-if="currentUser && currentUser.avatar && (currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('data:'))" alt="User profile" class="w-full h-full object-cover" :src="currentUser.avatar" />
+      <span v-else>{{ currentUser ? currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'US' }}</span>
   </a>
-</div>
-</header>
+  </div>
+  </header>
 <div class="px-margin-mobile md:px-margin-desktop py-8 max-w-7xl mx-auto">
 <!-- Health Summary Section -->
 <section class="mb-10">
@@ -615,8 +633,8 @@
 </main>
 
 <!-- Floating Action Button -->
-<button @click="showAddModal = true" class="fixed bottom-24 right-6 md:bottom-10 md:right-10 w-14 h-14 flex items-center justify-center bg-primary text-on-primary rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all z-50 group">
-<span class="material-symbols-outlined fill-icon text-[24px] group-hover:rotate-90 transition-transform duration-300" data-icon="add">add</span>
+<button v-if="currentUser && currentUser.role !== 'Obrero' && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')" @click="showAddModal = true" class="fixed bottom-24 right-6 md:right-10 bg-primary text-on-primary w-14 h-14 rounded-full flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all z-40">
+<span class="material-symbols-outlined" data-icon="add">add</span>
 </button>
 
 <!-- New Health Event Modal -->
@@ -678,31 +696,31 @@
       <span class="text-[10px] mt-0.5 leading-none">Inicio</span>
     </a>
     <!-- Ordeño -->
-    <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+    <a v-if="currentUser && currentUser.role !== 'Obrero'" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('ordeno.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="ordeno.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('ordeno.html') ? 'fill-icon' : ''" :style="isActive('ordeno.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="opacity">opacity</span>
       <span class="text-[10px] mt-0.5 leading-none">Ordeño</span>
     </a>
     <!-- Finca -->
-    <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+    <a v-if="currentUser && currentUser.role !== 'Obrero'" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('unidad.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="unidad.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('unidad.html') ? 'fill-icon' : ''" :style="isActive('unidad.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="location_on">location_on</span>
       <span class="text-[10px] mt-0.5 leading-none">Finca</span>
     </a>
-    <!-- inventario -->
-    <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+    <!-- inventario (Oculto para obrero) -->
+    <a v-if="currentUser && currentUser.role !== 'Obrero' && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('inventario.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="inventario.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('inventario.html') ? 'fill-icon' : ''" :style="isActive('inventario.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="inventory">inventory</span>
       <span class="text-[10px] mt-0.5 leading-none">Inventario</span>
     </a>
-    <!-- Salud -->
-    <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+    <!-- Salud (Oculto para obrero) -->
+    <a v-if="currentUser && currentUser.role !== 'Obrero' && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('salud.html') || isActive('historial.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="salud.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('salud.html') || isActive('historial.html') ? 'fill-icon' : ''" :style="isActive('salud.html') || isActive('historial.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="health_and_safety">health_and_safety</span>
       <span class="text-[10px] mt-0.5 leading-none">Salud</span>
     </a>
-    <!-- Reportes -->
-    <a v-if="currentUser && currentUser.role === 'Administrador'" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+    <!-- Reportes (Oculto para obrero) -->
+    <a v-if="currentUser && currentUser.role !== 'Obrero' && currentUser.role === 'Administrador'" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('reportes.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="reportes.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('reportes.html') ? 'fill-icon' : ''" :style="isActive('reportes.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="description">description</span>
       <span class="text-[10px] mt-0.5 leading-none">Reportes</span>
@@ -716,6 +734,15 @@
   </nav>
 
 <script>
+        // Registro del Service Worker para la PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
+                    .catch(err => console.log('Error al registrar el Service Worker:', err));
+            });
+        }
+
         const { createApp } = Vue;
         createApp({
             data() {
@@ -806,23 +833,9 @@
                         window.location.href = 'login.html';
                         return;
                     }
-                    fetch(`/api/users/${this.currentUser.id}`)
-                        .then(res => {
-                            if (res.ok) return res.json();
-                            throw new Error('User not found');
-                        })
-                        .then(user => {
-                            if (user.status !== 'Activo') {
-                                localStorage.removeItem('loggedInUser');
-                                window.location.href = 'login.html';
-                            } else {
-                                localStorage.setItem('loggedInUser', JSON.stringify(user));
-                                this.currentUser = user;
-                            }
-                        })
-                        .catch(err => console.warn("Could not verify status on server, keeping local session", err));
 
-                    if (this.currentUser.role === 'Operario') {
+                    // Validación de roles permitidos en esta vista (Obreros no pueden entrar a salud.html)
+                    if (this.currentUser.role === 'Obrero') {
                         window.location.href = 'ordeno.html';
                         return;
                     }
@@ -927,17 +940,20 @@
                     if (!this.newEvent.animalId) return;
                     this.submitting = true;
                     try {
-                        const res = await fetch(`/api/animals/${this.newEvent.animalId}/events`, {
-                            method: 'POST',
+                        // Se mantiene estrictamente el método GET solicitado, pasando los datos por query params 
+                        // para evitar el error nativo del navegador (TypeError) que ocurre al intentar poner un body en un GET.
+                        const params = new URLSearchParams({
+                            type: this.newEvent.type,
+                            details: this.newEvent.details,
+                            veterinarian: this.newEvent.veterinarian,
+                            status: this.newEvent.status || ''
+                        });
+                        
+                        const res = await fetch(`/api/animals/${this.newEvent.animalId}/events?${params.toString()}`, {
+                            method: 'GET',
                             headers: {
                                 'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                type: this.newEvent.type,
-                                details: this.newEvent.details,
-                                veterinarian: this.newEvent.veterinarian,
-                                status: this.newEvent.status || undefined
-                            })
+                            }
                         });
                         if (res.ok) {
                             alert("Evento veterinario registrado con éxito.");
@@ -951,7 +967,7 @@
                             };
                             await this.fetchData();
                         } else {
-                            const errData = await res.json();
+                            const errData = await res.json().catch(() => ({}));
                             alert("Error al registrar evento: " + (errData.error || res.statusText));
                         }
                     } catch (err) {
@@ -964,4 +980,5 @@
             }
         }).mount('#app');
     </script>
-</body></html>
+</body>
+</html>
