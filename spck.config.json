@@ -2,6 +2,6 @@
   "run": {
     "type": "url",
     "task": "npm/install",
-    "url": "https://elmanantial_pwa"
+    "url": "https://pwa_el_manantial"
   }
 }
