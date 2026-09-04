@@ -2,12 +2,12 @@
   "users": [
     {
       "id": 1,
-      "name": "Admin User",
+      "name": "Francisco Molina",
       "role": "Administrador",
       "status": "Activo",
       "email": "admin@elmanantial.com",
       "password": "admin123",
-      "avatar": "https://lh3.googleusercontent.com/aida-public/AB6AXuCcSnQrQ5pnPKfo4ASmtyif9pnTArxqW6D57jMNAI1OZrT3aHyj4TR-0f8KA0_ZS766n_9nl0kQfZUNyQB8JTEUS1ZLo0SXHF29-p7ttfJRn2pwyAE3RBN0n4UodadbGH_bGS1fDMc_7NJyPkeOybCHd8OIjUX_uCmRHBWlcgvpTqv8durYfuWtoyJtiVkcF1EPwONiG_F34liZA5ptQ83TaZmgI6lgcPlwizpLfbp1yamU6mK7a3LXsi8H5rP4_EHBs3dza0xFBWE"
+      "avatar": "ADMIN"
     },
     {
       "id": 2,
@@ -16,7 +16,7 @@
       "status": "Activo",
       "email": "veterinario@elmanantial.com",
       "password": "vet123",
-      "avatar": "https://lh3.googleusercontent.com/aida-public/AB6AXuBhCyxLO2Hb3F75HAUXLZIJGTVsyM1Ul7FTiwJRExwn5Pz1_ApGAgfv2ceaglS0MC7WhJSf53ug7F_eRdgVjdq89nIZuOIEPvhxF4HD1kPKvrXCkVISs6e64xjBybc6BWadyXRhSQE6hm2sT33F0ZonszGQ6UxaZKKZgTNCkUFfRhriOR36eQD_ZlvoKObiWijAuy1NTe-Piv4keH0WAqqr2CHfT6vSX09KE5EHCYqTVGL6GX8tRBu9M_E5XdMsGkvU-GyH5IY5Eww"
+      "avatar": "VET"
     },
     {
       "id": 3,
@@ -26,6 +26,42 @@
       "email": "jose@elmanantial.com",
       "password": "ope123",
       "avatar": "JS"
+    },
+    {
+      "id": 4,
+      "name": "Miguel Hernández",
+      "role": "Obrero",
+      "status": "Activo",
+      "email": "miguel@elmanantial.com",
+      "password": "obm123",
+      "avatar": "MH"
+    },
+    {
+      "id": 5,
+      "name": "Juan Rodríguez",
+      "role": "Obrero",
+      "status": "Activo",
+      "email": "juan@elmanantial.com",
+      "password": "obj123",
+      "avatar": "JR"
+    },
+    {
+      "id": 6,
+      "name": "Pedro Rojas",
+      "role": "Obrero",
+      "status": "Activo",
+      "email": "pedro@elmanantial.com",
+      "password": "obp123",
+      "avatar": "PR"
+    },
+    {
+      "id": 7,
+      "name": "Luis Berrios",
+      "role": "Obrero",
+      "status": "Activo",
+      "email": "luis@elmanantial.com",
+      "password": "obl123",
+      "avatar": "LB"
     }
   ],
   "inventory": [
@@ -90,16 +126,6 @@
       "healthAvg": "Observación",
       "status": "Revisión",
       "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuBo0x6Srpgv2-bB9Lxgeaiew9ry2dzO5DEtRIMNJM-xeLTFt4iwgpCIU2V2fNUqozfpTUn0xluL0X7ADBFzNNIFRZw5fL_QdsDtqwlqIrXnyGJO_i0L0HptoKZaXgjweJ10Rp-vmqTsO7xHAgtJEGtq7xiee5ukZ5bgAb46kWpb7KEwtT6iLilqFlTfWy7e13kfTqTiNqCykC2DoKJSnGrlnXsHZ-AURS9PhWmBCo8QVqL3zhzKym4O5PrNTpCwuiE9CoiF1fFpNuo"
-    },
-    {
-      "id": 3,
-      "name": "Lote A",
-      "owner": "",
-      "animalCount": 210,
-      "productionToday": 1450,
-      "healthAvg": "Excelente",
-      "status": "Activa",
-      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDyoJBk67pMfvNC_TOuqCE0fKENi_YnS8PyuoIZbZzn9-WRIgfhrrIGBV9Qqmz52RbldmJwmWDHMH32NgPw8DM5nDsUbQAiLgwXONDLi3aAUqF6Sj3lGOKVIL1TqA_Bi-0yOrOwHxD78a_R_3NArwCKg6aTBB-6CUys2uX0dQhywQ_3MjavSCf0GkMY2wCn8-O8RoVKaO0EtTLQ4rcfQPHOF4yzJwv4ZxBsb5kseksppsWZVrBmQMapSrXkNaSu5CCMIu6CVE40zT8"
     }
   ],
   "milkingRecords": [
@@ -262,4 +288,3 @@
     }
   ]
 }
-
