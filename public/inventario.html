@@ -1,12 +1,25 @@
 <!DOCTYPE html>
-<html class="light" lang="es"><head>
+<html class="light" lang="es">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>pwa_el_manantial</title>
+</head>
+<!-- Enlace al manifiesto de la PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#154212">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  <script src="local-db-fallback.js"></script>
+<!-- Respaldo local para funcionar sin internet -->
+<script src="local-db-fallback.js"></script>
+<!-- Lógica de sincronización cuando vuelve la red -->
+<script src="js/sync.js"></script>
+<!-- Lógica general de la interfaz -->
+<script src="js/app.js"></script>
+<!-- Archivos CSS externos -->
+<link rel="stylesheet" href="css/input.css">
+<link rel="stylesheet" href="css/custom.css">
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Work+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <style>
         body { font-family: 'Hanken Grotesk', sans-serif; }
@@ -357,7 +370,7 @@
         <span class="material-symbols-outlined" :class="isActive('index.html') ? 'fill-icon' : ''" :style="isActive('index.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="analytics">analytics</span>
         <span v-if="showSidebar" class="font-body-md text-body-md whitespace-nowrap transition-all duration-300">Panel Control</span>
       </a>
-      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
+      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario' || currentUser.role === 'Obrero')" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
          :class="[
            showSidebar ? 'px-4 py-3 mx-2 justify-start gap-3 w-[calc(100%-16px)]' : 'p-0 w-12 h-12 mx-auto justify-center',
            isActive('ordeno.html') ? 'bg-primary-container text-on-primary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-highest'
@@ -375,7 +388,7 @@
         <span class="material-symbols-outlined" :class="isActive('unidad.html') ? 'fill-icon' : ''" :style="isActive('unidad.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="location_on">location_on</span>
         <span v-if="showSidebar" class="font-body-md text-body-md whitespace-nowrap transition-all duration-300">Gestión Finca</span>
       </a>
-      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario' || currentUser.role === 'Operario')" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
+      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario' || currentUser.role === 'Operario' || currentUser.role === 'Obrero')" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
          :class="[
            showSidebar ? 'px-4 py-3 mx-2 justify-start gap-3 w-[calc(100%-16px)]' : 'p-0 w-12 h-12 mx-auto justify-center',
            isActive('inventario.html') ? 'bg-primary-container text-on-primary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-highest'
@@ -434,7 +447,7 @@
         <span class="material-symbols-outlined" data-icon="agriculture">agriculture</span>
       </div>
     </div>
-    <h2 class="font-headline-md text-lg md:text-headline-md font-bold text-primary ml-2 md:ml-4 whitespace-nowrap truncate">El Manantial</h2>
+    <h2 class="font-headline-md text-base md:text-2xl font-bold text-primary ml-2 md:ml-4 whitespace-nowrap truncate">El Manantial</h2>
   </div>
 <div class="flex items-center gap-4 pr-margin-mobile md:pr-margin-desktop">
   <button @click="toggleTheme" class="w-10 h-10 rounded-full hover:bg-surface-container-highest dark:hover:bg-slate-700 text-on-surface-variant dark:text-gray-300 transition-colors flex items-center justify-center cursor-pointer" :title="isDarkMode ? 'Modo Claro' : 'Modo Oscuro'">
@@ -444,12 +457,12 @@
 <button @click="logout" class="w-10 h-10 rounded-full hover:bg-error/10 text-on-surface-variant hover:text-error transition-colors flex items-center justify-center cursor-pointer" title="Cerrar Sesión">
     <span class="material-symbols-outlined text-[20px]" data-icon="logout">logout</span>
   </button>
-  <a href="usuarios.html" class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container flex items-center justify-center bg-primary text-on-primary text-sm font-bold active:scale-95 transition-transform duration-150 shadow-sm">
-    <img v-if="currentUser && currentUser.avatar && (currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('data:'))" alt="User profile" class="w-full h-full object-cover" :src="currentUser.avatar"/>
-    <span v-else>{{ currentUser ? currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'US' }}</span>
+  <a href="usuarios.html" class="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-[#154212] dark:border-[#10b981] flex items-center justify-center bg-[#154212] dark:bg-[#10b981] text-[#ffffff] dark:text-[#101726] text-sm font-bold active:scale-95 transition-transform duration-150 shadow-sm">
+      <img v-if="currentUser && currentUser.avatar && (currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('data:'))" alt="User profile" class="w-full h-full object-cover" :src="currentUser.avatar" />
+      <span v-else>{{ currentUser ? currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'US' }}</span>
   </a>
-</div>
-</header>
+  </div>
+  </header>
 
 <div class="px-margin-mobile md:px-margin-desktop py-8 max-w-7xl mx-auto">
 <!-- Header Section -->
@@ -459,29 +472,36 @@
 <p class="font-body-md text-body-md text-on-surface-variant">Gestión y monitoreo de suministros críticos para la producción Láctea.</p>
 </div>
 </div>
+
 <!-- Inventory Dashboard Stats (Bento Grid Style) -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
-<div @click="selectedStatusFilter = ''" :class="selectedStatusFilter === '' ? 'ring-2 ring-primary border-transparent' : 'border-outline-variant hover:border-primary/50'" class="bg-surface-container-low p-6 rounded-xl border flex flex-col justify-between cursor-pointer transition-all duration-200">
-<span class="text-on-surface-variant font-label-md text-label-md">TOTAL ITEMS</span>
-<span class="text-4xl font-bold text-primary mt-2">{{ totalItems }}</span>
+<div class="space-y-4 mb-10">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div @click="selectedStatusFilter = ''" :class="selectedStatusFilter === '' ? 'ring-2 ring-primary border-transparent' : 'border-outline-variant hover:border-primary/50'" class="bg-surface-container-low p-6 rounded-xl border flex flex-col justify-between cursor-pointer transition-all duration-200">
+      <span class="text-on-surface-variant font-label-md text-label-md">TOTAL ITEMS</span>
+      <span class="text-4xl font-bold text-primary mt-2">{{ totalItems }}</span>
+    </div>
+    <div class="bg-surface-container-high p-6 rounded-xl border border-outline-variant flex flex-col justify-between">
+      <span class="text-on-surface-variant font-label-md text-label-md">PRÓXIMA ENTREGA</span>
+      <span class="text-xl font-bold text-primary mt-2">Mañana, 08:00</span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div @click="selectedStatusFilter = (selectedStatusFilter === 'CRÍTICO' ? '' : 'CRÍTICO')" :class="selectedStatusFilter === 'CRÍTICO' ? 'ring-2 ring-error border-transparent' : 'border-error/20 hover:border-error/50'" class="bg-error-container/20 p-6 rounded-xl border flex flex-col justify-between cursor-pointer transition-all duration-200">
+      <span class="text-on-error-container font-label-md text-label-md flex items-center gap-1">
+        <span class="material-symbols-outlined text-[16px]" data-icon="error">error</span> CRÍTICO
+      </span>
+      <span class="text-4xl font-bold text-on-error-container mt-2">{{ String(criticalCount).padStart(2, '0') }}</span>
+    </div>
+    <div @click="selectedStatusFilter = (selectedStatusFilter === 'BAJO' ? '' : 'BAJO')" :class="selectedStatusFilter === 'BAJO' ? 'ring-2 ring-tertiary border-transparent' : 'border-tertiary/20 hover:border-tertiary/50'" class="bg-tertiary-container/10 p-6 rounded-xl border flex flex-col justify-between cursor-pointer transition-all duration-200">
+      <span class="text-tertiary font-label-md text-label-md flex items-center gap-1">
+        <span class="material-symbols-outlined text-[16px]" data-icon="warning">warning</span> BAJO
+      </span>
+      <span class="text-4xl font-bold text-tertiary mt-2">{{ String(lowCount).padStart(2, '0') }}</span>
+    </div>
+  </div>
 </div>
-<div @click="selectedStatusFilter = (selectedStatusFilter === 'CRÍTICO' ? '' : 'CRÍTICO')" :class="selectedStatusFilter === 'CRÍTICO' ? 'ring-2 ring-error border-transparent' : 'border-error/20 hover:border-error/50'" class="bg-error-container/20 p-6 rounded-xl border flex flex-col justify-between cursor-pointer transition-all duration-200">
-<span class="text-on-error-container font-label-md text-label-md flex items-center gap-1">
-<span class="material-symbols-outlined text-[16px]" data-icon="error">error</span> CRÍTICO
-                </span>
-<span class="text-4xl font-bold text-on-error-container mt-2">{{ String(criticalCount).padStart(2, '0') }}</span>
-</div>
-<div @click="selectedStatusFilter = (selectedStatusFilter === 'BAJO' ? '' : 'BAJO')" :class="selectedStatusFilter === 'BAJO' ? 'ring-2 ring-tertiary border-transparent' : 'border-tertiary/20 hover:border-tertiary/50'" class="bg-tertiary-container/10 p-6 rounded-xl border flex flex-col justify-between cursor-pointer transition-all duration-200">
-<span class="text-tertiary font-label-md text-label-md flex items-center gap-1">
-<span class="material-symbols-outlined text-[16px]" data-icon="warning">warning</span> BAJO
-                </span>
-<span class="text-4xl font-bold text-tertiary mt-2">{{ String(lowCount).padStart(2, '0') }}</span>
-</div>
-<div class="bg-surface-container-high p-6 rounded-xl border border-outline-variant flex flex-col justify-between">
-<span class="text-on-surface-variant font-label-md text-label-md">PRÓXIMA ENTREGA</span>
-<span class="text-xl font-bold text-primary mt-2">Mañana, 08:00</span>
-</div>
-</div>
+
 <!-- Inventory Lists -->
 <div class="space-y-12">
 <!-- Category: Feed -->
@@ -594,50 +614,44 @@
 </main>
 <!-- BottomNavBar (Mobile Only) -->
 <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-1 py-2 bg-surface dark:bg-inverse-surface border-t border-outline-variant dark:border-outline shadow-lg dark:shadow-none lg:hidden">
-    <!-- Inicio -->
     <a v-if="currentUser" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('index.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="index.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('index.html') ? 'fill-icon' : ''" :style="isActive('index.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="analytics">analytics</span>
       <span class="text-[10px] mt-0.5 leading-none">Inicio</span>
     </a>
-    <!-- Ordeño -->
-    <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+    <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario' || currentUser.role === 'Obrero')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('ordeno.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="ordeno.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('ordeno.html') ? 'fill-icon' : ''" :style="isActive('ordeno.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="opacity">opacity</span>
       <span class="text-[10px] mt-0.5 leading-none">Ordeño</span>
     </a>
-    <!-- Finca -->
 <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
    :class="isActive('unidad.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="unidad.html">
   <span class="material-symbols-outlined text-[20px]" :class="isActive('unidad.html') ? 'fill-icon' : ''" :style="isActive('unidad.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="location_on">location_on</span>
   <span class="text-[10px] mt-0.5 leading-none">Finca</span>
 </a>
-    <!-- Stock -->
-    <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+    <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario' || currentUser.role === 'Operario' || currentUser.role === 'Obrero')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('inventario.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="inventario.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('inventario.html') ? 'fill-icon' : ''" :style="isActive('inventario.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="inventory">inventory</span>
       <span class="text-[10px] mt-0.5 leading-none">Inventario</span>
     </a>
-    <!-- Salud -->
     <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('salud.html') || isActive('historial.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="salud.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('salud.html') || isActive('historial.html') ? 'fill-icon' : ''" :style="isActive('salud.html') || isActive('historial.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="health_and_safety">health_and_safety</span>
       <span class="text-[10px] mt-0.5 leading-none">Salud</span>
     </a>
-    <!-- Reportes -->
     <a v-if="currentUser && currentUser.role === 'Administrador'" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('reportes.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="reportes.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('reportes.html') ? 'fill-icon' : ''" :style="isActive('reportes.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="description">description</span>
       <span class="text-[10px] mt-0.5 leading-none">Reportes</span>
     </a>
-    <!-- Perfil -->
     <a class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('usuarios.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="usuarios.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('usuarios.html') ? 'fill-icon' : ''" :style="isActive('usuarios.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="group">group</span>
       <span class="text-[10px] mt-0.5 leading-none">Perfil</span>
     </a>
   </nav>
-<!-- FAB (Floating Action Button) - Add Item Contextual (Solo para Admin o Veterinario) -->
+
+<!-- FAB (Floating Action Button) -->
 <button v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')" @click="showAddModal = true" class="fixed bottom-24 right-6 md:right-10 bg-primary text-on-primary w-14 h-14 rounded-full flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all z-40">
 <span class="material-symbols-outlined" data-icon="add">add</span>
 </button>
@@ -678,6 +692,7 @@
 </form>
 </div>
 </div>
+
 <script>
         const { createApp } = Vue;
         createApp({
@@ -740,29 +755,18 @@
 
                 const userStr = localStorage.getItem('loggedInUser');
                 if (userStr) {
-                    this.currentUser = JSON.parse(userStr);
-                    // Force logout if account status is Inactive
-                    if (this.currentUser.status !== 'Activo') {
+                    try {
+                        this.currentUser = JSON.parse(userStr);
+                        if (this.currentUser.status !== 'Activo') {
+                            localStorage.removeItem('loggedInUser');
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                    } catch (e) {
                         localStorage.removeItem('loggedInUser');
                         window.location.href = 'login.html';
                         return;
                     }
-                    // Verify status on server to sign out inactive sessions on reload
-                    fetch(`/api/users/${this.currentUser.id}`)
-                        .then(res => {
-                            if (res.ok) return res.json();
-                            throw new Error('User not found');
-                        })
-                        .then(user => {
-                            if (user.status !== 'Activo') {
-                                localStorage.removeItem('loggedInUser');
-                                window.location.href = 'login.html';
-                            } else {
-                                localStorage.setItem('loggedInUser', JSON.stringify(user));
-                                this.currentUser = user;
-                            }
-                        })
-                        .catch(err => console.warn("Could not verify status on server, keeping local session", err));
                 } else {
                     window.location.href = 'login.html';
                     return;
@@ -794,13 +798,14 @@
                 async fetchItems() {
                     try {
                         const res = await fetch('/api/inventory');
-                        this.items = await res.json();
+                        if (res.ok) {
+                            this.items = await res.json();
+                        }
                     } catch (err) {
                         console.error("Error fetching inventory", err);
                     }
                 },
                 async adjustStock(item) {
-                    // Validar seguridad localmente también antes de ajustar
                     if (!this.currentUser || (this.currentUser.role !== 'Administrador' && this.currentUser.role !== 'Veterinario')) {
                         alert("No tienes permisos para realizar esta acción.");
                         return;
@@ -847,5 +852,16 @@
                 }
             }
         }).mount('#app');
+    </script>
+
+    <!-- Script para registrar el Service Worker de la PWA -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
+            .catch(err => console.error('Error al registrar el Service Worker:', err));
+        });
+      }
     </script>
 </body></html>
