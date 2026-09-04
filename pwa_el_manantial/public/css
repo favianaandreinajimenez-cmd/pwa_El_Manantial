@@ -1,0 +1,92 @@
+/* =================================================================ate
+   ESTILOS PERSONALIZADOS - EL MANANTIAL (PWA)
+   Inspiración: Material Design 3 & Tailwind CSS
+   =================================================================== */
+
+/* 1. Definición de Variables y Tokens de Color (Modo Claro por defecto) */
+:root {
+  --font-body: 'Hanken Grotesk', sans-serif;
+  --font-display: 'Work Sans', sans-serif;
+
+  /* Tokens de Color - Light Mode */
+  --color-primary: #154212;
+  --color-primary-container: #2d5a27;
+  --color-surface: #f8f9ff;
+  --color-background: #f8f9ff;
+  --color-on-surface: #0d1c2e;
+  
+  /* Estados y Alertas */
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  
+  /* Bordes y Divisores */
+  --color-outline-variant: #e1e4ed;
+}
+
+/* 2. Definición de Variables y Tokens para Modo Oscuro */
+html.dark {
+  /* Tokens de Color - Dark Mode */
+  --color-primary: #10b981;
+  --color-primary-container: #1b4d3e;
+  --color-surface: #101726;
+  --color-background: #0b0f19;
+  --color-on-surface: #f3f4f6;
+  
+  /* Tarjetas y Contenedores Oscuros */
+  --card-bg: #162032;
+  --card-bg-alt: #101726;
+  
+  /* Bordes y Divisores Oscuros */
+  --color-outline-variant: #25354e;
+}
+
+/* 3. Estilos Base y Tipografía */
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: var(--font-display);
+}
+
+/* 4. Componentes y Clases Utilitarias Personalizadas */
+.manantial-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+html.dark .manantial-card {
+  background-color: var(--card-bg);
+  border-color: var(--color-outline-variant);
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-family: var(--font-display);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+/* 5. Utilidades de Estado y Alertas */
+.alert-error {
+  background-color: var(--color-error-container);
+  color: var(--color-error);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
