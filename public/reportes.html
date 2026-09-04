@@ -1,12 +1,25 @@
 <!DOCTYPE html>
-<html class="light" lang="es"><head>
+<html class="light" lang="es">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>pwa_el_manantial</title>
+</head>
+<link rel="manifest" href="manifest.json"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<!-- Respaldo local para funcionar sin internet -->
 <script src="local-db-fallback.js"></script>
+<!-- Lógica de sincronización cuando vuelve la red -->
+<script src="js/sync.js"></script>
+<!-- Lógica general de la interfaz -->
+<script src="js/app.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Archivos CSS externos -->
+<link rel="stylesheet" href="css/input.css">
+<link rel="stylesheet" href="css/custom.css">
 <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -111,7 +124,6 @@
         .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
         .custom-chart-bar { transition: height 1s ease-out; }
 
-        /* Estilos optimizados para impresión / exportación a PDF sin errores */
         @media print {
             aside, header, nav, button, .fixed {
                 display: none !important;
@@ -334,7 +346,7 @@
 <!-- Navigation Drawer -->
 <aside :class="showSidebar ? 'w-80 translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-20'" class="hidden lg:flex flex-col h-[calc(100vh-4rem)] fixed left-0 top-16 z-50 border-r border-outline-variant bg-surface-container-low transition-all duration-300 ease-in-out">
 <div v-if="showSidebar" class="px-6 py-4 border-b border-outline-variant/30">
-<p class="font-label-md text-label-md text-primary font-bold uppercase tracking-wider">Municipio Obispo</p>
+<p class="font-label-md text-label-md text-primary font-bold uppercase tracking-wider">El Manantial</p>
 <p class="text-[11px] text-on-surface-variant">Gestión Láctea</p>
 </div>
 <nav class="flex-1 mt-4 px-2 overflow-y-auto custom-scrollbar flex flex-col gap-1">
@@ -347,7 +359,7 @@
         <span class="material-symbols-outlined" :class="isActive('index.html') ? 'fill-icon' : ''" :style="isActive('index.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="analytics">analytics</span>
         <span v-if="showSidebar" class="font-body-md text-body-md whitespace-nowrap transition-all duration-300">Panel Control</span>
       </a>
-      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
+      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario' || currentUser.role === 'Obrero')" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
          :class="[
            showSidebar ? 'px-4 py-3 mx-2 justify-start gap-3 w-[calc(100%-16px)]' : 'p-0 w-12 h-12 mx-auto justify-center',
            isActive('ordeno.html') ? 'bg-primary-container text-on-primary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-highest'
@@ -356,7 +368,7 @@
         <span class="material-symbols-outlined" :class="isActive('ordeno.html') ? 'fill-icon' : ''" :style="isActive('ordeno.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="opacity">opacity</span>
         <span v-if="showSidebar" class="font-body-md text-body-md whitespace-nowrap transition-all duration-300">Registro Ordeño</span>
       </a>
-      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
+      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario' || currentUser.role === 'Obrero')" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
          :class="[
            showSidebar ? 'px-4 py-3 mx-2 justify-start gap-3 w-[calc(100%-16px)]' : 'p-0 w-12 h-12 mx-auto justify-center',
            isActive('unidad.html') ? 'bg-primary-container text-on-primary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-highest'
@@ -365,7 +377,7 @@
         <span class="material-symbols-outlined" :class="isActive('unidad.html') ? 'fill-icon' : ''" :style="isActive('unidad.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="location_on">location_on</span>
         <span v-if="showSidebar" class="font-body-md text-body-md whitespace-nowrap transition-all duration-300">Gestión Finca</span>
       </a>
-      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario' || currentUser.role === 'Operario')" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
+      <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario' || currentUser.role === 'Operario' || currentUser.role === 'Obrero')" @click="showSidebar = false" class="flex items-center transition-all duration-200 rounded-full"
          :class="[
            showSidebar ? 'px-4 py-3 mx-2 justify-start gap-3 w-[calc(100%-16px)]' : 'p-0 w-12 h-12 mx-auto justify-center',
            isActive('inventario.html') ? 'bg-primary-container text-on-primary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-highest'
@@ -424,7 +436,7 @@
             <span class="material-symbols-outlined" data-icon="agriculture">agriculture</span>
         </div>
     </div>
-    <h2 class="font-headline-md text-lg md:text-headline-md font-bold text-primary ml-2 md:ml-4 whitespace-nowrap truncate">El Manantial</h2>
+    <h2 class="font-headline-md text-base md:text-2xl font-bold text-primary ml-2 md:ml-4 whitespace-nowrap truncate">El Manantial</h2>
 </div>
 <div class="flex items-center gap-4 pr-margin-mobile md:pr-margin-desktop">
   <button @click="toggleTheme" class="w-10 h-10 rounded-full hover:bg-surface-container-highest dark:hover:bg-slate-700 text-on-surface-variant dark:text-gray-300 transition-colors flex items-center justify-center cursor-pointer" :title="isDarkMode ? 'Modo Claro' : 'Modo Oscuro'">
@@ -434,12 +446,12 @@
 <button @click="logout" class="w-10 h-10 rounded-full hover:bg-error/10 text-on-surface-variant hover:text-error transition-colors flex items-center justify-center cursor-pointer" title="Cerrar Sesión">
     <span class="material-symbols-outlined text-[20px]" data-icon="logout">logout</span>
   </button>
-  <a href="usuarios.html" class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container flex items-center justify-center bg-primary text-on-primary text-sm font-bold active:scale-95 transition-transform duration-150 shadow-sm">
-    <img v-if="currentUser && currentUser.avatar && (currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('data:'))" alt="User profile" class="w-full h-full object-cover" :src="currentUser.avatar"/>
-    <span v-else>{{ currentUser ? currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'US' }}</span>
+  <a href="usuarios.html" class="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-[#154212] dark:border-[#10b981] flex items-center justify-center bg-[#154212] dark:bg-[#10b981] text-[#ffffff] dark:text-[#101726] text-sm font-bold active:scale-95 transition-transform duration-150 shadow-sm">
+      <img v-if="currentUser && currentUser.avatar && (currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('data:'))" alt="User profile" class="w-full h-full object-cover" :src="currentUser.avatar" />
+      <span v-else>{{ currentUser ? currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'US' }}</span>
   </a>
-</div>
-</header>
+  </div>
+  </header>
 
 <div class="px-margin-mobile md:px-margin-desktop py-8 max-w-7xl mx-auto space-y-md">
 <!-- Filters & Actions -->
@@ -463,7 +475,6 @@
 </div>
 
 <div class="flex gap-sm w-full md:w-auto relative">
-    <!-- Botón con menú desplegable para Compartir -->
     <div class="relative flex-1 md:flex-none">
         <button @click="showShareMenu = !showShareMenu" class="w-full md:w-auto flex items-center justify-center gap-xs px-md py-2 border border-primary text-primary font-label-lg text-label-lg rounded-lg hover:bg-primary-fixed transition-colors active:scale-95 duration-150 cursor-pointer">
             <span class="material-symbols-outlined text-[20px]" data-icon="share">share</span>
@@ -471,7 +482,6 @@
             <span class="material-symbols-outlined text-[16px]">expand_more</span>
         </button>
 
-        <!-- Menú emergente de compartir (Solo WhatsApp y Correo Electrónico) -->
         <div v-if="showShareMenu" @click.away="showShareMenu = false" class="absolute left-0 md:left-auto md:right-0 mt-2 w-56 bg-white dark:bg-[#162032] border border-outline-variant dark:border-[#25354e] rounded-xl shadow-xl z-50 py-2 overflow-hidden">
             <button @click="shareWhatsApp" class="w-full text-left px-4 py-2.5 flex items-center gap-3 hover:bg-surface-container-low dark:hover:bg-[#1e293b] text-on-surface dark:text-gray-200 transition-colors text-sm cursor-pointer">
                 <span class="material-symbols-outlined text-emerald-600">chat</span>
@@ -484,7 +494,6 @@
         </div>
     </div>
 
-    <!-- Botón Exportar PDF -->
     <button @click="exportPDF" class="flex-1 md:flex-none flex items-center justify-center gap-xs px-md py-2 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg hover:opacity-90 transition-colors active:scale-95 duration-150 shadow-sm cursor-pointer">
         <span class="material-symbols-outlined text-[20px]" data-icon="picture_as_pdf">picture_as_pdf</span>
         Exportar PDF
@@ -494,7 +503,6 @@
 
 <!-- Summary Cards -->
 <section class="grid grid-cols-1 md:grid-cols-3 gap-md">
-<!-- Total Liters -->
 <div @click="openMetricModal('liters')" class="bg-white p-md rounded-xl border border-outline-variant shadow-sm hover:border-primary transition-all duration-200 cursor-pointer active:scale-98 group">
 <div class="flex justify-between items-start mb-base">
 <div class="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center text-primary">
@@ -509,7 +517,7 @@
 <h3 class="font-display-lg text-display-lg text-primary mt-xs">{{ totalLiters.toLocaleString() }}<span class="text-headline-md font-normal ml-xs">L</span></h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-sm">Acumulado del mes actual</p>
 </div>
-<!-- Avg Yield -->
+
 <div @click="openMetricModal('avg')" class="bg-white p-md rounded-xl border border-outline-variant shadow-sm hover:border-primary transition-all duration-200 cursor-pointer active:scale-98">
 <div class="flex justify-between items-start mb-base">
 <div class="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center text-primary">
@@ -524,7 +532,7 @@
 <h3 class="font-display-lg text-display-lg text-primary mt-xs">{{ avgLitersPerCow }}<span class="text-headline-md font-normal ml-xs">L/día</span></h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-sm">Rendimiento promedio diario</p>
 </div>
-<!-- Projection -->
+
 <div @click="openMetricModal('projection')" class="bg-primary-container text-on-primary-container p-md rounded-xl border border-primary shadow-sm relative overflow-hidden cursor-pointer hover:brightness-105 active:scale-98 transition-all duration-200">
 <div class="relative z-10">
 <div class="flex justify-between items-start mb-base">
@@ -536,7 +544,6 @@
 <h3 class="font-display-lg text-display-lg mt-xs">{{ projectionNextMonth.toLocaleString() }}<span class="text-headline-md font-normal ml-xs">L</span></h3>
 <p class="font-body-sm text-body-sm mt-sm">Estimado en base a registros</p>
 </div>
-<!-- Background Pattern -->
 <div class="absolute -right-4 -bottom-4 opacity-10">
 <span class="material-symbols-outlined text-[120px]" data-icon="agriculture">agriculture</span>
 </div>
@@ -545,7 +552,6 @@
 
 <!-- Bento Layout: Chart and Table -->
 <section class="grid grid-cols-1 lg:grid-cols-3 gap-md">
-<!-- Bar Chart (Asymmetric Span) -->
 <div class="lg:col-span-2 bg-white p-md rounded-xl border border-outline-variant shadow-sm flex flex-col">
 <div class="flex justify-between items-center mb-lg">
 <h4 class="font-headline-md text-headline-md font-bold text-on-surface">Producción Diaria (Litros)</h4>
@@ -558,7 +564,6 @@
 </div>
 <div class="flex-grow flex items-end gap-1 md:gap-2 h-64 md:h-80 group">
 <div class="flex-grow flex items-end justify-between px-2 h-full">
-<!-- Dynamic Chart Bars -->
 <div v-for="point in chartData" :key="point.day" class="flex flex-col justify-end items-center gap-2 w-full h-full">
 <div class="w-full bg-primary rounded-t-sm custom-chart-bar transition-all duration-1000" :style="{ height: getChartBarHeight(point.liters) }"></div>
 <span class="font-label-md text-label-md text-outline hidden md:block">{{ point.day }}</span>
@@ -566,11 +571,10 @@
 </div>
 </div>
 </div>
-<!-- Ranking -->
+
 <div class="bg-white p-md rounded-xl border border-outline-variant shadow-sm flex flex-col">
 <h4 class="font-headline-md text-headline-md font-bold text-on-surface mb-md">Ranking de Unidades</h4>
 <div class="space-y-sm">
-<!-- Dynamic Rankings -->
 <div v-for="item in ranking" :key="item.rank" :class="item.rank === 1 ? 'bg-surface-container-low border border-transparent hover:border-outline-variant' : 'hover:bg-surface-container-low'" class="flex items-center gap-md p-sm rounded-lg transition-colors group">
 <div :class="item.rank === 1 ? 'bg-primary text-on-primary' : 'bg-outline-variant text-on-surface'" class="w-8 h-8 rounded-full flex items-center justify-center font-bold">{{ item.rank }}</div>
 <div class="flex-grow">
@@ -708,17 +712,17 @@
       <span class="material-symbols-outlined text-[20px]" :class="isActive('index.html') ? 'fill-icon' : ''" :style="isActive('index.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="analytics">analytics</span>
       <span class="text-[10px] mt-0.5 leading-none">Inicio</span>
     </a>
-    <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+    <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario' || currentUser.role === 'Obrero')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('ordeno.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="ordeno.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('ordeno.html') ? 'fill-icon' : ''" :style="isActive('ordeno.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="opacity">opacity</span>
       <span class="text-[10px] mt-0.5 leading-none">Ordeño</span>
     </a>
-    <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+    <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Operario' || currentUser.role === 'Obrero')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('unidad.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="unidad.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('unidad.html') ? 'fill-icon' : ''" :style="isActive('unidad.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="location_on">location_on</span>
       <span class="text-[10px] mt-0.5 leading-none">Finca</span>
     </a>
-    <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario' || currentUser.role === 'Operario')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
+    <a v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario' || currentUser.role === 'Operario' || currentUser.role === 'Obrero')" class="flex flex-col items-center justify-center flex-1 py-1 transition-all duration-200"
        :class="isActive('inventario.html') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'" href="inventario.html">
       <span class="material-symbols-outlined text-[20px]" :class="isActive('inventario.html') ? 'fill-icon' : ''" :style="isActive('inventario.html') ? 'font-variation-settings: \'FILL\' 1;' : ''" data-icon="inventory">inventory</span>
       <span class="text-[10px] mt-0.5 leading-none">Inventario</span>
@@ -741,12 +745,20 @@
   </nav>
 
 <!-- Floating Action Button Contextual (FAB) -->
-<a href="ordeno.html" class="fixed right-6 bottom-24 md:right-6 md:bottom-10 w-14 h-14 bg-primary text-on-primary rounded-full shadow-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-200 z-50 group">
-<span class="material-symbols-outlined fill-icon text-[24px] group-hover:rotate-90 transition-transform duration-300" data-icon="add">add</span>
-<span class="absolute right-16 bg-inverse-surface text-inverse-on-surface px-3 py-1 rounded-lg text-label-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Nuevo Registro</span>
-</a>
+<button v-if="currentUser && (currentUser.role === 'Administrador' || currentUser.role === 'Veterinario')" @click="showAddModal = true" class="fixed bottom-24 right-6 md:right-10 bg-primary text-on-primary w-14 h-14 rounded-full flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all z-40">
+    <span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
 
 <script>
+    // Registro del Service Worker para PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
+                .catch(err => console.error('Error al registrar el Service Worker:', err));
+        });
+    }
+
     const { createApp } = Vue;
     createApp({
         data() {
@@ -785,6 +797,7 @@
                         window.location.href = 'login.html';
                         return;
                     }
+                    
                     fetch(`/api/users/${this.currentUser.id}`)
                         .then(res => {
                             if (res.ok) return res.json();
@@ -809,7 +822,10 @@
                         window.location.href = 'ordeno.html';
                         return;
                     }
-
+                    if (this.currentUser.role === 'Obrero') {
+                        window.location.href = 'ordeno.html';
+                        return;
+                    }
                 } else {
                     window.location.href = 'login.html';
                     return;
@@ -844,7 +860,6 @@
                 return path.includes(page) || (page === 'index.html' && (path.endsWith('/') || path.endsWith('/index.html') || path === ''));
             },
 
-            // Funciones para Compartir (WhatsApp y Correo)
             shareWhatsApp() {
                 this.showShareMenu = false;
                 const text = `📊 *Reporte de Producción - El Manantial*\nTotal Litros: ${this.totalLiters.toLocaleString()} L\nPromedio por Vaca: ${this.avgLitersPerCow} L/día\nEnlace: ${window.location.href}`;
@@ -865,7 +880,6 @@
                 }
             },
 
-            // Función corregida para Exportar a PDF (Impresión limpia)
             exportPDF() {
                 window.print();
             },
