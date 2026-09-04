@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html lang="es"><head>
+<html class="light" lang="es">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>El_manantial_gestión_láctea_pwa</title>
+</head>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#064e3b">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<!-- Respaldo local para funcionar sin internet -->
 <script src="local-db-fallback.js"></script>
+<!-- Lógica de sincronización cuando vuelve la red -->
+<script src="js/sync.js"></script>
+<!-- Lógica general de la interfaz -->
+<script src="js/app.js"></script>
+<!-- Archivos CSS externos -->
+<link rel="stylesheet" href="css/input.css">
+<link rel="stylesheet" href="css/custom.css">
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <style>
@@ -420,7 +433,7 @@
             <span class="material-symbols-outlined" data-icon="agriculture">agriculture</span>
         </div>
     </div>
-    <h2 class="font-headline-md text-lg md:text-headline-md font-bold text-primary ml-2 md:ml-4 whitespace-nowrap truncate">El Manantial</h2>
+    <h2 class="font-headline-md text-base md:text-2xl font-bold text-primary ml-2 md:ml-4 whitespace-nowrap truncate">El Manantial</h2>
 </div>
 <div class="flex items-center gap-4 pr-margin-mobile md:pr-margin-desktop">
   <button @click="toggleTheme" class="w-10 h-10 rounded-full hover:bg-surface-container-highest dark:hover:bg-slate-700 text-on-surface-variant dark:text-gray-300 transition-colors flex items-center justify-center cursor-pointer" :title="isDarkMode ? 'Modo Claro' : 'Modo Oscuro'">
@@ -430,7 +443,7 @@
 <button @click="logout" class="w-10 h-10 rounded-full hover:bg-error/10 text-on-surface-variant hover:text-error transition-colors flex items-center justify-center cursor-pointer" title="Cerrar Sesión">
     <span class="material-symbols-outlined text-[20px]" data-icon="logout">logout</span>
   </button>
-  <a href="usuarios.html" class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container flex items-center justify-center bg-primary text-on-primary text-sm font-bold active:scale-95 transition-transform duration-150 shadow-sm">
+  <a href="usuarios.html" class="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-[#154212] flex items-center justify-center bg-primary text-on-primary text-sm font-bold active:scale-95 transition-transform duration-150 shadow-sm">
     <img v-if="currentUser && currentUser.avatar && (currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('data:'))" alt="User profile" class="w-full h-full object-cover" :src="currentUser.avatar"/>
     <span v-else>{{ currentUser ? currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'US' }}</span>
   </a>
@@ -670,12 +683,30 @@ No hay eventos clínicos registrados para este animal.
 </div>
 
 <script>
+    // Registro del Service Worker para PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
+                .catch(err => console.error('Error al registrar el Service Worker:', err));
+        });
+    }
+
     const { createApp } = Vue;
     createApp({
         data() {
             return {
                 isDarkMode: false,
                 currentUser: null,
+                usersList: [
+                    { id: 1, name: 'Francisco Molina', email: 'francisco@elmanantial.com', role: 'Administrador', status: 'Activo' },
+                    { id: 2, name: 'Dra. Maria Mendoza', email: 'maria@elmanantial.com', role: 'Veterinario', status: 'Activo' },
+                    { id: 3, name: 'Carlos Pérez', email: 'carlos@elmanantial.com', role: 'Operario', status: 'Activo' },
+                    { id: 4, name: 'Miguel Hernández', email: 'miguel@elmanantial.com', role: 'Obrero', status: 'Activo' },
+                    { id: 5, name: 'Juan Rodríguez', email: 'juan@elmanantial.com', role: 'Obrero', status: 'Activo' },
+                    { id: 6, name: 'Pedro Rojas', email: 'pedro@elmanantial.com', role: 'Obrero', status: 'Activo' },
+                    { id: 7, name: 'Luis Berrios', email: 'luis@elmanantial.com', role: 'Obrero', status: 'Activo' }
+                ],
                 animal: {
                     id: '',
                     name: '',
@@ -744,23 +775,24 @@ No hay eventos clínicos registrados para este animal.
                     window.location.href = 'login.html';
                     return;
                 }
-                fetch(`/api/users/${this.currentUser.id}`)
+                
+                fetch(`/api/users/${this.currentUser.id}`, { method: 'GET' })
                     .then(res => {
                         if (res.ok) return res.json();
                         throw new Error('User not found');
                     })
                     .then(user => {
-                        if (user.status !== 'Activo') {
+                        if (user && user.status !== 'Activo') {
                             localStorage.removeItem('loggedInUser');
                             window.location.href = 'login.html';
-                        } else {
+                        } else if (user) {
                             localStorage.setItem('loggedInUser', JSON.stringify(user));
                             this.currentUser = user;
                         }
                     })
                     .catch(err => console.warn("Could not verify status on server, keeping local session", err));
 
-                if (this.currentUser.role === 'Operario') {
+                if (this.currentUser.role === 'Operario' || this.currentUser.role === 'Obrero') {
                     window.location.href = 'ordeno.html';
                     return;
                 }
@@ -803,12 +835,12 @@ No hay eventos clínicos registrados para este animal.
             async fetchAnimalDetails() {
                 const id = this.getAnimalIdFromUrl();
                 try {
-                    const res = await fetch(`/api/animals/${id}`);
+                    const res = await fetch(`/api/animals/${id}`, { method: 'GET' });
                     if (res.ok) {
                         this.animal = await res.json();
                         this.editNotesText = this.animal.notes || '';
                     } else {
-                        const fallbackRes = await fetch('/api/animals/L-402');
+                        const fallbackRes = await fetch('/api/animals/L-402', { method: 'GET' });
                         if (fallbackRes.ok) {
                             this.animal = await fallbackRes.json();
                             this.editNotesText = this.animal.notes || '';
@@ -876,7 +908,7 @@ No hay eventos clínicos registrados para este animal.
                 const id = this.animal.id;
                 try {
                     const res = await fetch(`/api/animals/${id}/events`, {
-                        method: 'POST',
+                        method: 'GET',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             type: this.newEvent.type,
